@@ -22,4 +22,5 @@ jobs:
 
       - name: Compile with Maven
         run: |
+          cd java
           mvn test
