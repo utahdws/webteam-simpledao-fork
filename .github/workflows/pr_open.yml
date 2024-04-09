@@ -1,0 +1,45 @@
+#testing updating the version when a PR is open
+name: Update pom version when PR opened
+
+on:
+  pull_request:
+    types: [opened, reopened]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  update_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set build id
+        run: |
+          buildId=${{ github.run_id }}
+          echo "BUILD_ID=$buildId" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: api
+          ref: ${{ github.head_ref }}
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v1
+        with:
+          java-version: 21
+
+      - name: Update Maven Version
+        run: |
+          cd api
+          ls -la
+          cd java
+          echo "Current Version: $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
+          echo "New Version: $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "${BUILD_ID}+github-actions[bot]@users.noreply.github.com"
+          git status
+          git add pom.xml
+          git commit -m "Bump pom version"
+          git push
