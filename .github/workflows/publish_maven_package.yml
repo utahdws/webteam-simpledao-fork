@@ -17,6 +17,8 @@ jobs:
           distribution: 'corretto'
 
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: |
+          cd java
+          mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
