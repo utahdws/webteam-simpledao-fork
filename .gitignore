@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+java/target
 
 # External tool builders
 .externalToolBuilders/
