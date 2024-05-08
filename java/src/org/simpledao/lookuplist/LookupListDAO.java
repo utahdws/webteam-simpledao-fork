@@ -37,22 +37,20 @@ public class LookupListDAO
             Statement stmnt = con.createStatement();
 
             sql = SELECT_LIST_SQL.replaceAll( "#TABLE#", tableName ).replaceAll( "#WHERE#", ""  );
-            if ( sqlLog.isDebugEnabled() )
-            { sqlLog.debug("getLookupList SQL: " + sql ); }
+            sqlLog.debug("getLookupList SQL: " + sql );
 
             ResultSet rs = stmnt.executeQuery( sql );
 
             while (rs.next())
             {
-                if ( log.isDebugEnabled() )
-                { log.debug("getLookupList - add List Item: " + rs.getString("DESCRIPTION") ); }
+                log.debug("getLookupList - add List Item: {}", rs.getString("DESCRIPTION") );
                 list.add( new LookupListBean( rs.getInt( "ID" ),
                                           rs.getString( "DESCRIPTION" )  ) );
             }
         }
         catch (SQLException e)
         {
-            log.error("getLookupList: " + e.getMessage());
+            log.error("getLookupList: {}", e.getMessage());
             throw new Exception("An error occurred while getting the Lookup List '" + tableName + "'",e);
         }
 
@@ -70,15 +68,13 @@ public class LookupListDAO
 
             sql = SELECT_LIST_SQL.replaceAll( "#TABLE#", tableName ).replaceAll( "#WHERE#", " WHERE " + criteria );
 
-            if ( sqlLog.isDebugEnabled() )
-            { sqlLog.debug("getLookupList SQL: " + sql ); }
+            sqlLog.debug("getLookupList SQL: " + sql );
 
             ResultSet rs = stmnt.executeQuery( sql );
 
             while (rs.next())
             {
-                if ( log.isDebugEnabled() )
-                { log.debug("getLookupList - add List Item: " + rs.getString("DESCRIPTION") ); }
+                log.debug("getLookupList - add List Item: " + rs.getString("DESCRIPTION") );
                 list.add( new LookupListBean( rs.getInt( "ID" ),
                                           rs.getString( "DESCRIPTION" )  ) );
             }

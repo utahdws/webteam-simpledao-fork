@@ -188,7 +188,7 @@ public class Utils
 
         catch (Exception ex)
         {
-            log.warn("Unable to test for null type '" + type.getName() + "' against '" + nullValue + "' because of - " + ex.getMessage());
+            log.warn("Unable to test for null type '{}' against '{}' because of - {}", type.getName(), nullValue, ex.getMessage());
         }
         return false;
     }
@@ -206,12 +206,12 @@ public class Utils
             {
                 if ("".equals(bv.getValue().toString()))
                 {
-                    if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is null date (String)");}
+                    log.debug("bindStatementVariable - var '{}' is null date (String)", bv.getName());
                     stmt.setNull(bv.getPosition(), Types.DATE);
                 }
                 else
                 {
-                    if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var is date (String)");}
+                    log.debug("bindStatementVariable - var is date (String)");
 
                     String format = "M/d/yyyy";
                     if ( bv.getName().toLowerCase().indexOf("time") > 0 )
@@ -235,59 +235,58 @@ public class Utils
             {
                 if ("".equals(bv.getValue().toString()))
                 {
-                    if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is null String");}
+                    log.debug("bindStatementVariable - var '{}' is null String", bv.getName());
                     stmt.setNull(bv.getPosition(), Types.VARCHAR);
                 }
                 else
                 {
-                    if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is String");}
+                    log.debug("bindStatementVariable - var '{}' is String", bv.getName());
                     stmt.setString(bv.getPosition(), bv.getValue().toString());
                 }
             }
         }
         else if (bv.getType() == Integer.class || "int".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is int");}
+            log.debug("bindStatementVariable - var '{}' is int", bv.getName());
             stmt.setInt(bv.getPosition(), Integer.parseInt(bv.getValue().toString(), 10));
         }
         else if (bv.getType() == Long.class || "long".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is long", bv.getName());}
+            log.debug("bindStatementVariable - var '{}' is long", bv.getName());
             stmt.setLong(bv.getPosition(), Long.parseLong(bv.getValue().toString(), 10));
         }
         else if (bv.getType() == Double.class || "double".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is double", bv.getName());}
+            log.debug("bindStatementVariable - var '{}' is double", bv.getName());
             stmt.setDouble(bv.getPosition(), Double.parseDouble(bv.getValue().toString()));
         }
         else if (bv.getType() == Float.class ||  "float".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is float", bv.getName());}
+            log.debug("bindStatementVariable - var '{}' is float", bv.getName());
             stmt.setFloat(bv.getPosition(), Float.parseFloat(bv.getValue().toString()));
         }
         else if ("char".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is char", bv.getName());}
+            log.debug("bindStatementVariable - var '{}' is char", bv.getName());
             stmt.setString(bv.getPosition(), bv.getValue().toString());
         }
         else if ( bv.getValue() instanceof java.util.Date )
         {
-            if ( log.isDebugEnabled() ) {
-                log.debug("bindStatementVariable - var '{}' is Date", bv.getName());}
-            stmt.setTimestamp(bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
+            log.debug("bindStatementVariable - var '{}' is Date", bv.getName());
+            stmt.setTimestamp(bv.getPosition(), new Timestamp(((java.util.Date)bv.getValue()).getTime()));
 
         }
         else
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is not mapped");}
+            log.debug("bindStatementVariable - var '{}' is not mapped", bv.getName());}
             stmt.setString(bv.getPosition(), bv.getValue().toString());
         }
 
-    }
+
     public static void bindVariables( PreparedStatement stmt,
             ArrayList<BoundVariable> boundVariables ) throws SQLException
     {
-		if ( log.isDebugEnabled() ) { log.debug("bindVariables - begin");}
+        log.debug("bindVariables - begin");
 
         for (BoundVariable bv : boundVariables)
         {
@@ -295,7 +294,7 @@ public class Utils
             // this takes care of the WHERE clause of an update
             if (bv.getPosition() == 0)
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - found the key");}
+				log.debug("bindVariables - found the key");
                 bv.setPosition(boundVariables.size());
             }
 
@@ -305,16 +304,14 @@ public class Utils
                 {
                     if ("".equals(bv.getValue().toString()))
                     {
-						if ( log.isDebugEnabled() ) {
-                            log.debug("bindVariables - var '" + bv.getName() + "' is null date (String)");
-                        }
+
+                        log.debug("bindVariables - var '{}' is null date (String)", bv.getName());
+
                         stmt.setNull(bv.getPosition(), Types.DATE);
                     }
                     else
                     {
-						if ( log.isDebugEnabled() ) {
-                            log.debug("bindVariables - var is date (String)");
-                        }
+                        log.debug("bindVariables - var is date (String)");
 
                         String format = "M/d/yyyy";
                         if ( bv.getName().toLowerCase().indexOf("time") > 0 )
@@ -338,49 +335,49 @@ public class Utils
                 {
                     if ("".equals(bv.getValue().toString()))
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is null String");}
+						log.debug("bindVariables - var '" + bv.getName() + "' is null String");
                         stmt.setNull(bv.getPosition(), Types.VARCHAR);
                     }
                     else
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is String");}
+						log.debug("bindVariables - var '" + bv.getName() + "' is String");
                         stmt.setString(bv.getPosition(), bv.getValue().toString());
                     }
                 }
             }
             else if (bv.getType() == Integer.class || "int".equals(bv.getType().getName()))
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is int");}
+				log.debug("bindVariables - var '" + bv.getName() + "' is int");
                 stmt.setInt(bv.getPosition(), Integer.parseInt(bv.getValue().toString(), 10));
             }
 			else if (bv.getType() == Long.class || "long".equals(bv.getType().getName()))
 			{
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is long");}
+				log.debug("bindVariables - var '" + bv.getName() + "' is long");
 				stmt.setLong(bv.getPosition(), Long.parseLong(bv.getValue().toString(), 10));
 			}
 			else if (bv.getType() == Double.class || "double".equals(bv.getType().getName()))
 			{
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is double");}
+				log.debug("bindVariables - var '" + bv.getName() + "' is double");
 				stmt.setDouble(bv.getPosition(), Double.parseDouble(bv.getValue().toString()));
 			}
 			else if (bv.getType() == Float.class ||  "float".equals(bv.getType().getName()))
 			{
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is float");}
+				log.debug("bindVariables - var '" + bv.getName() + "' is float");
 				stmt.setFloat(bv.getPosition(), Float.parseFloat(bv.getValue().toString()));
 			}
             else if ("char".equals(bv.getType().getName()))
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is char");}
+				log.debug("bindVariables - var '" + bv.getName() + "' is char");
                 stmt.setString(bv.getPosition(), bv.getValue().toString());
             }
 			else if ( bv.getValue() instanceof java.util.Date )
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is Date");}
-                stmt.setTimestamp(bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
+				log.debug("bindVariables - var '" + bv.getName() + "' is Date");
+                stmt.setTimestamp(bv.getPosition(), new Timestamp(((java.util.Date)bv.getValue()).getTime()));
             }
             else
             {
-                if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is not mapped");}
+                log.debug("bindStatementVariable - var '" + bv.getName() + "' is not mapped");
                 stmt.setString(bv.getPosition(), bv.getValue().toString());
             }
         }
@@ -389,7 +386,7 @@ public class Utils
     public static PreparedStatement prepareStatement(Connection con, String sql, ArrayList<BoundVariable> boundVariables)
         throws SQLException
     {
-        if ( log.isDebugEnabled() ) { log.debug("bindVariables - begin");}
+        log.debug("bindVariables - begin");
 
         PreparedStatement statement = con.prepareStatement(sql);
         for (BoundVariable bv : boundVariables)
@@ -397,7 +394,7 @@ public class Utils
             // this takes care of the WHERE clause of an update
             if (bv.getPosition() == 0)
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - found the key");}
+				log.debug("bindVariables - found the key");
                 bv.setPosition(boundVariables.size());
             }
 
@@ -412,12 +409,12 @@ public class Utils
                 {
                     if ("".equals(bv.getValue().toString()))
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is null date (String)");}
+						log.debug("bindVariables - var '{}' is null date (String)", bv.getName());
                         statement.setNull(bv.getPosition(), Types.DATE);
                     }
                     else
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var is date (String)");}
+						log.debug("bindVariables - var is date (String)");
 
                         String format = "M/d/yyyy";
                         if ( bv.getName().toLowerCase().indexOf("time") > 0 )
@@ -441,60 +438,59 @@ public class Utils
                 {
                     if ("".equals(bv.getValue().toString()))
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is null String");}
+						log.debug("bindVariables - var '{}' is null String", bv.getName());
                         statement.setNull(bv.getPosition(), Types.VARCHAR);
                     }
                     else
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is String");}
+						log.debug("bindVariables - var '{}' is String", bv.getName());
                         statement.setString(bv.getPosition(), bv.getValue().toString());
                     }
                 }
             }
             else if (bv.getType() == Integer.class || "int".equals(bv.getType().getName()))
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is int");}
+				log.debug("bindVariables - var '{}' is int", bv.getName());
                 statement.setInt(bv.getPosition(), Integer.parseInt(bv.getValue().toString(), 10));
             }
 			else if (bv.getType() == Long.class || "long".equals(bv.getType().getName()))
 			{
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is long");}
+                log.debug("bindVariables - var '{}' is long", bv.getName());
 				statement.setLong(bv.getPosition(), Long.parseLong(bv.getValue().toString(), 10));
 			}
 			else if (bv.getType() == Double.class || "double".equals(bv.getType().getName()))
 			{
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is double");}
+                log.debug("bindVariables - var '{}' is double", bv.getName());
 				statement.setDouble(bv.getPosition(), Double.parseDouble(bv.getValue().toString()));
 			}
 			else if (bv.getType() == Float.class ||  "float".equals(bv.getType().getName()))
 			{
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is float");}
+
 				statement.setFloat(bv.getPosition(), Float.parseFloat(bv.getValue().toString()));
 			}
             else if ( bv.getType() == byte[].class) // BLOB
             {
-                if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is a byte array - assume blob");}
+                log.debug("bindVariables - var '{}' is a byte array - assume blob",  bv.getName());
                 statement.setBlob(bv.getPosition(), new ByteArrayInputStream((byte[])bv.getValue()));
             }
             else if ("char".equals(bv.getType().getName()))
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is char");}
+				log.debug("bindVariables - var '{}' is char", bv.getName());
                 statement.setString(bv.getPosition(), bv.getValue().toString());
             }
 			else if ( bv.getValue() instanceof java.util.Date )
             {
-				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is Date");
-                }
-                statement.setTimestamp(bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
+				log.debug("bindVariables - var '{}' is Date", bv.getName() );
+                statement.setTimestamp(bv.getPosition(), new Timestamp(((java.util.Date)bv.getValue()).getTime()));
             }
             else
             {
-                if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is not mapped");}
+                log.debug("bindStatementVariable - var '{}' is not mapped", bv.getName());
                 statement.setString(bv.getPosition(), bv.getValue().toString());
             }
 
         }
-        if ( log.isDebugEnabled() ) { log.debug("bindVariables - end");}
+        log.debug("bindVariables - end");
         return statement;
     }
 
@@ -555,5 +551,5 @@ public class Utils
             // no need to catch
         }
     }
-
 }
+

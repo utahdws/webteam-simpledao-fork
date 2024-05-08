@@ -85,14 +85,14 @@ public class SimpleDAO<T>
 
     public T simpleSelect( Connection con, T criteria) throws SQLException
     {
-        if ( log.isDebugEnabled() ) { log.debug("Get the beans properties");}
+        log.debug("Get the beans properties");
         return simpleSelect(con, criteria, getBeanDescriptor(criteria));
     }
 
 
     public T simpleSelect( Connection con, T criteria, BeanDescriptor descriptor ) throws SQLException
 	{
-		if ( log.isDebugEnabled() ) { log.debug("call simpleSelectList and get the first bean");}
+		log.debug("call simpleSelectList and get the first bean");
 
 		ArrayList<T> beanList = simpleSelectList(con, criteria, descriptor);
 		if ( beanList.size() > 0 )
@@ -146,16 +146,14 @@ public class SimpleDAO<T>
                 {
                     if ( metaData.getColumnType(i) == Types.BLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("bytea") )
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("simpleSelectList - column # '" + i + "' is a BLOB");}
+                        log.debug("simpleSelectList - column # '{}' is a BLOB", i);
 
                         Blob blob = rs.getBlob( metaData.getColumnName(i).toUpperCase() );
 
                         if ( blob != null )
                         {
-                            if (log.isDebugEnabled())
-                            {
-                                log.debug("simpleSelectList - column # '" + i + "' BLOB is not null, write it to bean");
-                            }
+                            log.debug("simpleSelectList - column # '{}' BLOB is not null, write it to bean", i);
+
                             ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
                             BufferedInputStream bis = new BufferedInputStream(blob.getBinaryStream());
 
@@ -177,31 +175,28 @@ public class SimpleDAO<T>
                     }
                     else if  ( metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text") )
                     {
-                        if (log.isDebugEnabled())
-                        {
-                            log.debug("simpleSelectList - write CLOB to bean'");
-                        }
+                        log.debug("simpleSelectList - write CLOB to bean'");
                         props.put(columnPropertyMap.get(metaData.getColumnName(i).toUpperCase()), rs.getString(i));
 
                     }
                     else if ( metaData.getColumnType(i) == Types.DATE || metaData.getColumnTypeName(i).equalsIgnoreCase("date") )
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("simpleSelectList - column # '" + i + "' is a DATE");}
+                        log.debug("simpleSelectList - column # '{}' is a DATE", i);
                         props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTimestamp(i) );
                     }
                     else if ( metaData.getColumnType(i) == Types.TIME || metaData.getColumnTypeName(i).equalsIgnoreCase("time") )
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("simpleSelectList - column # '" + i + "' is a TIME");}
+                        log.debug("simpleSelectList - column # '{}' is a TIME", i);
                         props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTime(i) );
                     }
                     else if ( metaData.getColumnType(i) == Types.TIMESTAMP || metaData.getColumnTypeName(i).equalsIgnoreCase("timestamp"))
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("simpleSelectList - column # '" + i + "' is a TIMESTAMP");}
+                        log.debug("simpleSelectList - column # '{}' is a TIMESTAMP", i);
                         props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTimestamp(i) );
                     }
                     else
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("simpleSelectList - column # '" + i + "' is not special");}
+                        log.debug("simpleSelectList - column # '{}' is not special", i);
                         props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getString(i) );
                     }
                 }
@@ -209,9 +204,6 @@ public class SimpleDAO<T>
             }
 
             // create the return bean
-            //Type pt = bean.getClass().getGenericSuperclass();
-            //T newBean = (T)((Class)pt).newInstance();
-            //T newBean = (T)((Class)((ParameterizedType)pt).getActualTypeArguments()[0]).newInstance();
             T newBean;
             try
             {
@@ -346,7 +338,7 @@ public class SimpleDAO<T>
         {
             String column = description.getPropertyMap().get(property).getName();
             // if the database column is not already specified (unlikely), then determine it
-            if (column == null || "".equals(column))
+            if (column == null || column.isEmpty())
             {
                 column = Utils.getPropertyDBName(property);
             }
@@ -360,7 +352,7 @@ public class SimpleDAO<T>
             }
             catch (Exception e)
             {
-                log.error("Unable to find bean property named '" + property + "'",e);
+                log.error("Unable to find bean property named '{}'", property, e);
                 throw new RuntimeException("Unable to get the bean property named '" + property + "'",e);
             }
 
@@ -389,7 +381,7 @@ public class SimpleDAO<T>
         sql.append( valuesSQL );
         sql.append( " )");
 
-        if ( sqlLog.isDebugEnabled() ) { sqlLog.debug("buildInsertStatement SQL:" + sql); }
+        sqlLog.debug("buildInsertStatement SQL:{}", sql);
 
         return Utils.prepareStatement(con, sql.toString(), bindVariables);
     }
@@ -410,7 +402,7 @@ public class SimpleDAO<T>
 
             StringBuilder selectSQL = new StringBuilder( "SELECT ");
             StringBuilder whereSQL = new StringBuilder(" FROM " );
-            StringBuilder orderSQL = new StringBuilder("");
+            StringBuilder orderSQL = new StringBuilder();
 
             whereSQL.append( descriptor.getTable() );
 
@@ -422,7 +414,7 @@ public class SimpleDAO<T>
                 String property = ent.getKey();
                 String column = ent.getValue().getName();
 
-                if ( log.isDebugEnabled()) { log.debug("buildSelectStatement - get property '" + property + "' for column '" + column + "'");}
+                log.debug("buildSelectStatement - get property '{}' for column '{}'", property, column);
                 
                 PropertyDescriptor pd;
                 Object value;
@@ -461,7 +453,7 @@ public class SimpleDAO<T>
             }
 
             Map<Integer, SortedColumn> sorts = descriptor.getOrderedColumns();
-            if ( sorts != null && sorts.size() > 0 )
+            if ( sorts != null && !sorts.isEmpty())
             {
                 //todo: this might need to look at the property<->column map to make sure this column is included
                 for ( int i = 1; i <= sorts.size(); i ++ )
@@ -480,7 +472,7 @@ public class SimpleDAO<T>
             selectSQL.append( orderSQL );
             sql = selectSQL.toString();
         }
-        if ( sqlLog.isDebugEnabled() ) { sqlLog.debug("buildSelectStatement SQL:" + sql); }
+        sqlLog.debug("buildSelectStatement SQL:" + sql);
 
         return Utils.prepareStatement(con, sql, bindVariables);
     }
@@ -562,7 +554,7 @@ public class SimpleDAO<T>
                     {
                         if (def.isNullable())
                         {
-                            log.debug("set {0} to NULL", column);
+                            log.debug("set {} to NULL", column);
                             col.append("?");
                             columnCount++;
                             bindVariables.add(new BoundVariable(columnCount, column, type, null));
@@ -592,7 +584,7 @@ public class SimpleDAO<T>
             sql = updateSQL.toString();
         }
 
-        if ( sqlLog.isDebugEnabled() ) { sqlLog.debug("buildUpdateStatement SQL:" + sql); }
+        sqlLog.debug("buildUpdateStatement SQL:" + sql);
         return Utils.prepareStatement(con, sql, bindVariables);
     }
 
@@ -635,7 +627,7 @@ public class SimpleDAO<T>
                 bindVariables.add( new BoundVariable( colCount, column, type, value ));
             }
         }
-        if ( sqlLog.isDebugEnabled() ) { sqlLog.debug("buildDeleteStatement SQL:" + sql); }
+        sqlLog.debug("buildDeleteStatement SQL:" + sql);
         return Utils.prepareStatement(con, sql.toString(), bindVariables);
     }
 
@@ -653,7 +645,7 @@ public class SimpleDAO<T>
         {
             if ( key.equalsIgnoreCase( column ))
             {
-				if ( log.isDebugEnabled()) { log.debug("Key column found: " + column) ;}
+                log.debug("Key column found: {}", column);
 				return true;
             }
         }
@@ -686,7 +678,7 @@ public class SimpleDAO<T>
                 value = PropertyUtils.getProperty(bean, param);
             } catch (Exception e)
             {
-                log.error("Unable to get bean property named '" + param + "'", e);
+                log.error("Unable to get bean property named '{}'", param, e);
                 throw new RuntimeException("Unable to get the bean property named '" + param + "'", e);
             }
             paramCount++;

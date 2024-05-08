@@ -150,7 +150,7 @@ public abstract class SimpleBean
      */
     public void populate( HashMap props )
     {
-        if ( log.isDebugEnabled() ) { log.debug("populate - begin");}
+        log.debug("populate - begin");
         ReflectionUtils.populateBean(this, props);
     }
 

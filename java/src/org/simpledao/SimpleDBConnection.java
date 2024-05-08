@@ -47,10 +47,7 @@ public class SimpleDBConnection
 
     public SimpleDBConnection( Type type,String namespace )
     {
-        if ( log.isDebugEnabled() )
-        {
-            log.debug("new SimpleDBConnection with type '{}' and namespace '{}'", type, namespace);
-        }
+        log.debug("new SimpleDBConnection with type '{}' and namespace '{}'", type, namespace);
 
         this.type = type;
         switch ( type )
@@ -72,10 +69,7 @@ public class SimpleDBConnection
 
     public Connection getDBConnection() throws SQLException
     {
-        if ( log.isDebugEnabled() )
-        {
-           log.debug("getDBConnection()");
-        }
+        log.debug("getDBConnection()");
 
         if ( jndiDSName == null || jndiDSName.isEmpty())
         {
@@ -101,10 +95,7 @@ public class SimpleDBConnection
             throw new RuntimeException("A JNDI Datasource name must be specified to use the JNDI Connection");
         }
 
-        if ( log.isDebugEnabled() )
-        {
-           log.debug("getJNDIDBConnection() jndiDSName: " + jndiDSName);
-        }
+        log.debug("getJNDIDBConnection() jndiDSName: {}", jndiDSName);
 
         DataSource ds;
         try
@@ -153,7 +144,7 @@ public class SimpleDBConnection
 
     private Connection getPooledDBConnection() throws SQLException
     {
-        if (log.isDebugEnabled() ) { log.debug("get a pooled database connection"); }
+        log.debug("get a pooled database connection");
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl(databaseURL);
         ds.setUsername(databaseUser);
@@ -166,7 +157,7 @@ public class SimpleDBConnection
 
     private Connection getSingleDBConnection() throws SQLException
     {
-        if (log.isDebugEnabled() ) { log.debug("get a non-pooled database connection"); }
+        log.debug("get a non-pooled database connection");
         try
         {
             Class.forName( databaseDriver);

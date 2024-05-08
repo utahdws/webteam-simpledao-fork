@@ -213,12 +213,12 @@ public class ReflectionUtils
      */
     public static void populateBean( Object bean, HashMap props )
     {
-        if ( log.isDebugEnabled() ) { log.debug("populate - begin");}
+        log.debug("populate - begin");
 
         for (Object o : props.keySet())
         {
             String propName = (String) o;
-            if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "'");}
+            log.debug("populate - property '{}'", propName);
 
             if (propName == null)
             {
@@ -229,16 +229,14 @@ public class ReflectionUtils
             Object value = props.get(propName);
             if ( value == null )
             {
-                if ( log.isDebugEnabled() ) {
-                    log.debug("populate - property '{}' - null property value not set", propName);}
+                log.debug("populate - property '{}' - null property value not set", propName);
                 continue;
             }
 
 
             if (propName.matches(".*[dD]ate$") && value instanceof String)
             {
-                if ( log.isDebugEnabled() ) {
-                    log.debug("populate - property '{}' is a string and has date in the name, format it", propName);}
+                log.debug("populate - property '{}' is a string and has date in the name, format it", propName);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
 
                 try
@@ -258,28 +256,24 @@ public class ReflectionUtils
 
                 if ( value instanceof java.sql.Timestamp || value instanceof java.sql.Date || value instanceof java.sql.Time)
                 {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug("populate - set the date property '{}'", propName);}
+                    log.debug("populate - set the date property '{}'", propName);
 
                     PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(bean, propName);
                     if (descriptor.getPropertyType().equals(java.util.Date.class) )
                     {
-                        if ( log.isDebugEnabled() ) {
-                            log.debug("populate - property '{}' expects date", propName);}
+                        log.debug("populate - property '{}' expects date", propName);
                         LocaleBeanUtils.setProperty(bean, propName, value);
                     }
                     else if ( descriptor.getPropertyType().equals(java.lang.String.class))
                     {
-                        if ( log.isDebugEnabled() ) {
-                            log.debug("populate - property '{}' expects string", propName);}
+                        log.debug("populate - property '{}' expects string", propName);
                         BeanUtils.setProperty(bean, propName, value);
                     }
 
                 }
                 else
                 {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug("populate - set the property '{}'", propName);}
+                    log.debug("populate - set the property '{}'", propName);
                     BeanUtils.setProperty(bean, propName, value);
                 }
             }
