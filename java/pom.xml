@@ -9,6 +9,15 @@
     <version>2.9.6</version>
     <name>SimpleDAO</name>
 
+    <properties>
+        <java.version>21</java.version>
+        <commons.beanutils.version>1.9.4</commons.beanutils.version>
+        <dbcp2.version>2.12.0</dbcp2.version>
+        <lombok.version>1.18.30</lombok.version>
+        <log4j.slf4j2.impl.version>2.23.1</log4j.slf4j2.impl.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+    </properties>
+
     <distributionManagement>
       <repository>
         <id>github</id>
@@ -21,9 +30,10 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.9.4</version>
+            <version>${commons.beanutils.version}</version>
             <exclusions>
                     <exclusion>
+                        <!-- Address one CVE -->
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
@@ -33,21 +43,21 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
-            <version>2.12.0</version>
+            <version>${dbcp2.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>2.23.1</version>
+            <version>${log4j.slf4j2.impl.version}</version>
         </dependency>
 
     </dependencies>
@@ -58,10 +68,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
