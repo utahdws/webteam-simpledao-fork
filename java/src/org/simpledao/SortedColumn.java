@@ -1,5 +1,10 @@
 package org.simpledao;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class SortedColumn
 {
     private SortOrder sortOrder = SortOrder.ASCENDING;
@@ -10,26 +15,6 @@ public class SortedColumn
     public SortedColumn(String name, SortOrder order)
     {
         sortOrder = order;
-        this.name = name;
-    }
-
-    public SortOrder getSortOrder()
-    {
-        return sortOrder;
-    }
-
-    public void setSortOrder(SortOrder sortOrder)
-    {
-        this.sortOrder = sortOrder;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
         this.name = name;
     }
 

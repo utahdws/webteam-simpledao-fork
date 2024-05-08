@@ -14,12 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jumiller
- * Date: Feb 24, 2011
- * Time: 6:54:09 AM
- */
 //todo: insert byte array blob
 //todo: handle clob in insert
 public class SimpleDAO<T>

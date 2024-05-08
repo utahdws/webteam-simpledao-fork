@@ -8,17 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jumiller
- * Date: Jun 15, 2011
- * Time: 4:36:10 PM
- */
 public class ReflectionUtils
 {
     private static final Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
@@ -29,7 +22,7 @@ public class ReflectionUtils
             return ((SimpleBean)bean).describe();
         else
         {
-            PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
+            PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
             for (PropertyDescriptor prop : descriptors)
             {
                 if ( prop.getPropertyType() == BeanDescriptor.class )
@@ -40,7 +33,7 @@ public class ReflectionUtils
                     }
                     catch (Exception e)
                     {
-                        log.error("Unable to get property '" + prop.getName() + "'", e);
+                        log.error("Unable to get property '{}'", prop.getName(), e);
                     }
                 }
             }
@@ -97,20 +90,10 @@ public class ReflectionUtils
                     column.setSortOrder( oc.sortOrder());
                     column.setOrderByPosition( oc.orderPosition());
                 }
-/*                if ( ca != null && !"".equals(ca.value()))
-                {
-                    props.put(property, ((Column)ca).value());
-                }
-                else
-                {
-                    props.put(property, Utils.getPropertyDBName(property));
-    //                if (!"class".equals(property) && property.indexOf("DB") < 0)
-                }*/
                 props.put(property,column);
             }
         }
 
-        //Map props = BeanUtils.describe(this);
         return props;
     }
 
@@ -128,21 +111,21 @@ public class ReflectionUtils
      */
     public static String inferBeanDBTableName( Object bean )
     {
-        Annotation ta = bean.getClass().getAnnotation(Table.class);
-        if ( ta != null && ta instanceof Table && !"".equals(((Table)ta).value()))
+        Table ta = bean.getClass().getAnnotation(Table.class);
+        if (ta != null && !"".equals(ta.value()))
         {
-            return ((Table)ta).value();
+            return ta.value();
         }
         else if ( bean.getClass().getName().contains("$"))
         {
-            // most likely an anonymous inner class, behave apprropriately
+            // most likely an anonymous inner class, behave appropriately
             try
             {
                 return inferBeanDBTableName( bean.getClass().getSuperclass().newInstance() );
             }
             catch (Exception e)
             {
-                log.error("infer table name - unable to instantiate super class. " + e.getMessage(), e);
+                log.error("infer table name - unable to instantiate super class. {}", e.getMessage(), e);
                 throw new RuntimeException("infer table name - unable to instantiate super class of inner class",e);
             }
         }
@@ -156,7 +139,7 @@ public class ReflectionUtils
     {
         List<String> keys = new ArrayList<String>();
         String guessedKey = null;
-        PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -179,7 +162,7 @@ public class ReflectionUtils
                 }
             }
         }
-        if ( keys.size() == 0 && guessedKey != null && !"".equals(guessedKey))
+        if (keys.isEmpty() && guessedKey != null && !guessedKey.isEmpty())
         {
             keys.add(guessedKey);
         }
@@ -189,7 +172,7 @@ public class ReflectionUtils
     public static Map<Integer, SortedColumn> getBeanDBOrderBy( Object bean )
     {
         Map<Integer, SortedColumn> sorts = new HashMap<Integer,SortedColumn>();
-        PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -214,11 +197,8 @@ public class ReflectionUtils
                     position =oca.orderPosition();
                 }
 
-               //if ( position == sorts.size() )
                 if ( position == 0 || sorts.containsKey(position) )
                     throw new RuntimeException("Order Position must be > 0 and unique");
-
-                //if ( position == 0 ) position = sorts.size() + 1;
 
                 sorts.put(position, column);
             }
@@ -249,68 +229,27 @@ public class ReflectionUtils
             Object value = props.get(propName);
             if ( value == null )
             {
-                if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' - null property value not set");}
+                if ( log.isDebugEnabled() ) {
+                    log.debug("populate - property '{}' - null property value not set", propName);}
                 continue;
             }
 
 
-            // turn date into displayable date
-
-/*
-            for ( Method method : this.getClass().getMethods() )
+            if (propName.matches(".*[dD]ate$") && value instanceof String)
             {
-                String propMethod = "set" + propName.substring(0,1).toUpperCase() + propName.substring(1);
-                if ( method.getName().equals( propMethod ))
-                {
-                    Class clazz = method.getParameterTypes()[0];
-                    if ( clazz.getName().equals("java.lang.String"))
-                    {
-                        try
-                        {
-                            method.invoke(this, value );
-                        }
-                        catch ( Exception e )
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                    else if ( clazz.getName().equals("java.util.Date"))
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
-
-*/
-/*
-                    for ( Class clazz : method.getParameterTypes() )
-                    {
-
-                    }
-*/
-/*
-                }
-            }
-*/
-
-            if (propName.matches(".*[dD]ate$") && value != null && value instanceof String )
-            {
-                if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' is a string and has date in the name, format it");}
+                if ( log.isDebugEnabled() ) {
+                    log.debug("populate - property '{}' is a string and has date in the name, format it", propName);}
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-                //sdf.setLenient(false);
+
                 try
                 {
                     Date dt = sdf.parse(value.toString());
                     sdf.applyPattern("MM/dd/yyyy");
-                    //java.sql.Date newDt = new java.sql.Date( dt.getTime());
                     value = sdf.format(dt);
-                    //value = dt.toString();
                 }
                 catch (ParseException e)
                 {
-                    log.error("populate - unable to format the date. " + e.getMessage(), e );
+                    log.error("populate - unable to format the date. {}", e.getMessage(), e);
                 }
             }
 
@@ -319,30 +258,34 @@ public class ReflectionUtils
 
                 if ( value instanceof java.sql.Timestamp || value instanceof java.sql.Date || value instanceof java.sql.Time)
                 {
-                    if ( log.isDebugEnabled() ) { log.debug("populate - set the date property '" + propName + "'");}
+                    if ( log.isDebugEnabled() ) {
+                        log.debug("populate - set the date property '{}'", propName);}
 
                     PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(bean, propName);
                     if (descriptor.getPropertyType().equals(java.util.Date.class) )
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' expects date");}
+                        if ( log.isDebugEnabled() ) {
+                            log.debug("populate - property '{}' expects date", propName);}
                         LocaleBeanUtils.setProperty(bean, propName, value);
                     }
                     else if ( descriptor.getPropertyType().equals(java.lang.String.class))
                     {
-                        if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' expects string");}
+                        if ( log.isDebugEnabled() ) {
+                            log.debug("populate - property '{}' expects string", propName);}
                         BeanUtils.setProperty(bean, propName, value);
                     }
 
                 }
                 else
                 {
-                    if ( log.isDebugEnabled() ) { log.debug("populate - set the property '" + propName + "'");}
+                    if ( log.isDebugEnabled() ) {
+                        log.debug("populate - set the property '{}'", propName);}
                     BeanUtils.setProperty(bean, propName, value);
                 }
             }
             catch (Exception e)
             {
-                log.error("populate - unable to set the property. " + e.getMessage(),e );
+                log.error("populate - unable to set the property. {}", e.getMessage(), e);
                 // do nothing, property not found or set
             }
         }

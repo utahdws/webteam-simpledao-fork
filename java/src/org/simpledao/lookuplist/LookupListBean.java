@@ -1,34 +1,17 @@
 package org.simpledao.lookuplist;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LookupListBean
 {
-	private String description = null;
 	private int id ;
+	private String description = null;
 
-	public LookupListBean(int id, String name)
-	{
-		this.id = id;
-		this.description = name;
-	}
-
-	public LookupListBean() {}
-
-	public int getId()
-	{
-		return id;
-	}
-
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}}
+}

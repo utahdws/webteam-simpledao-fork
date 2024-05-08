@@ -41,7 +41,7 @@ public abstract class SimpleBean
     @ExcludedProperty
     public String getDBTableName()
     {
-        if ( dbTableName == null || "".equals( dbTableName ) )
+        if ( dbTableName == null || dbTableName.isEmpty())
         {
             dbTableName = ReflectionUtils.inferBeanDBTableName(this);
         }
@@ -136,7 +136,7 @@ public abstract class SimpleBean
                 }
                 catch (Exception e)
                 {
-                    log.error("Unable to set property '" + property + "'",e);
+                    log.error("Unable to set property '{}'", property, e);
                 }
             }
 		}
@@ -179,7 +179,7 @@ public abstract class SimpleBean
                 }
                 catch (Exception e)
                 {
-                    log.error("Unable to set prop '" + propName + "'",e);
+                    log.error("Unable to set prop '{}'", propName, e);
                 }
             }
         }

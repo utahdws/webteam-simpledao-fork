@@ -1,25 +1,23 @@
 package org.simpledao;
 
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.simpledao.annotations.Column;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.sql.*;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
+@NoArgsConstructor
 public class Utils
 {
-
-	private static final Logger log = LoggerFactory.getLogger(Utils.class);
-
-    public Utils() {}
-
     /**
      *
      * @param bean to use
@@ -49,6 +47,7 @@ public class Utils
 
         return props;
     }
+
 
 
     /**
@@ -253,27 +252,28 @@ public class Utils
         }
         else if (bv.getType() == Long.class || "long".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is long");}
+            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is long", bv.getName());}
             stmt.setLong(bv.getPosition(), Long.parseLong(bv.getValue().toString(), 10));
         }
         else if (bv.getType() == Double.class || "double".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is double");}
+            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is double", bv.getName());}
             stmt.setDouble(bv.getPosition(), Double.parseDouble(bv.getValue().toString()));
         }
         else if (bv.getType() == Float.class ||  "float".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is float");}
+            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is float", bv.getName());}
             stmt.setFloat(bv.getPosition(), Float.parseFloat(bv.getValue().toString()));
         }
         else if ("char".equals(bv.getType().getName()))
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is char");}
+            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '{}' is char", bv.getName());}
             stmt.setString(bv.getPosition(), bv.getValue().toString());
         }
         else if ( bv.getValue() instanceof java.util.Date )
         {
-            if ( log.isDebugEnabled() ) { log.debug("bindStatementVariable - var '" + bv.getName() + "' is Date");}
+            if ( log.isDebugEnabled() ) {
+                log.debug("bindStatementVariable - var '{}' is Date", bv.getName());}
             stmt.setTimestamp(bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
 
         }

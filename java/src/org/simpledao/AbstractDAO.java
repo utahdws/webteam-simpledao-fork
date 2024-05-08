@@ -1,6 +1,5 @@
 package org.simpledao;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,12 +7,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jumiller
- * Date: Apr 5, 2011
- * Time: 3:34:19 PM
- */
 public abstract class AbstractDAO<T>
 {
     private static final Logger log = LoggerFactory.getLogger(AbstractDAO.class);
@@ -40,7 +33,6 @@ public abstract class AbstractDAO<T>
 
     public List<T> getList(T criteria)  throws SQLException
     {
-//        if ( log.isDebugEnabled()) { log.debug("GetList('" + criteria.getClass().getName() + "') - begin");}
         log.debug("GetList('{}' - begin", criteria.getClass().getName() );
         Connection con = null;
         try
@@ -56,13 +48,13 @@ public abstract class AbstractDAO<T>
         finally
         {
             closeConnection(con);
-            if ( log.isDebugEnabled()) { log.debug("GetList('" + criteria.getClass().getName() + "') - end");}
+            if ( log.isDebugEnabled()) { log.debug("GetList('{}') - end", criteria.getClass().getName()); }
         }
     }
 
     public T get(T criteria) throws SQLException
     {
-        if ( log.isDebugEnabled()) { log.debug("Get('" + criteria.getClass().getName() + "') - begin");}
+        if ( log.isDebugEnabled()) { log.debug("Get('{}') - begin", criteria.getClass().getName()); }
         Connection con = null;
         try
         {
@@ -77,13 +69,14 @@ public abstract class AbstractDAO<T>
         finally
         {
             closeConnection(con);
-            if ( log.isDebugEnabled()) { log.debug("Get('" + criteria.getClass().getName() + "') - end");}
+            if ( log.isDebugEnabled()) { log.debug("Get('{}') - end", criteria.getClass().getName()); }
         }
     }
 
     public void insert(T criteria) throws SQLException
     {
-        if ( log.isDebugEnabled()) { log.debug("Insert('" + criteria.getClass().getName() + "') - begin");}
+        if ( log.isDebugEnabled()) { log.debug("Insert('{}') - begin", criteria.getClass().getName()); }
+
         Connection con = null;
         try
         {
@@ -98,14 +91,14 @@ public abstract class AbstractDAO<T>
         finally
         {
             closeConnection(con);
-            if ( log.isDebugEnabled()) { log.debug("Insert('" + criteria.getClass().getName() + "') - end");}
+            if ( log.isDebugEnabled()) { log.debug("Insert('{}') - end", criteria.getClass().getName()); }
         }
 
     }
 
     public void update(T criteria) throws SQLException
     {
-        if ( log.isDebugEnabled()) { log.debug("Update('" + criteria.getClass().getName() + "') - begin");}
+        if ( log.isDebugEnabled()) { log.debug("Update('{}') - begin", criteria.getClass().getName()); }
         Connection con = null;
         try
         {
@@ -120,13 +113,13 @@ public abstract class AbstractDAO<T>
         finally
         {
             closeConnection(con);
-            if ( log.isDebugEnabled()) { log.debug("Update('" + criteria.getClass().getName() + "') - end");}
+            if ( log.isDebugEnabled()) { log.debug("Update('{}') - end", criteria.getClass().getName()); }
         }
     }
 
     public void delete(T criteria) throws SQLException
     {
-        if ( log.isDebugEnabled()) { log.debug("GetList('" + criteria.getClass().getName() + "') - begin");}
+        if ( log.isDebugEnabled()) { log.debug("GetList('{}') - begin", criteria.getClass().getName()); }
         Connection con = null;
         try
         {
@@ -141,7 +134,7 @@ public abstract class AbstractDAO<T>
         finally
         {
             closeConnection(con);
-            if ( log.isDebugEnabled()) { log.debug("Delete('" + criteria.getClass().getName() + "') - end");}
+            if ( log.isDebugEnabled()) { log.debug("Delete('{}') - end", criteria.getClass().getName()); }
         }
     }
 
