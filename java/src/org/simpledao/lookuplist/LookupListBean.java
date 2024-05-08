@@ -1,19 +1,10 @@
 package org.simpledao.lookuplist;
 
-/**
- * <p/>
- * User: jumiller
- * Date: Aug 23, 2006
- * Time: 12:38:41 PM
- * </p>
- */
 public class LookupListBean
 {
-	// ----------------------------------------------------- Instance Variables
 	private String description = null;
 	private int id ;
 
-	// ----------------------------------------------------- Constructors
 	public LookupListBean(int id, String name)
 	{
 		this.id = id;
@@ -22,7 +13,6 @@ public class LookupListBean
 
 	public LookupListBean() {}
 
-	// ----------------------------------------------------- Getters/Setters
 	public int getId()
 	{
 		return id;

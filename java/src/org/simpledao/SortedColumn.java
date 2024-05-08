@@ -1,11 +1,5 @@
 package org.simpledao;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jumiller
- * Date: Jun 22, 2011
- * Time: 9:21:27 AM
- */
 public class SortedColumn
 {
     private SortOrder sortOrder = SortOrder.ASCENDING;

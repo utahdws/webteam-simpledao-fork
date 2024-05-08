@@ -16,14 +16,6 @@ import java.util.Map;
  * methods for populating the bean from the database and determining
  * specific database properties at runtime (e.g. database table name)</p>
  * <p/>
- * User: jumiller
- * Date: Apr 27, 2006
- * Time: 2:28:55 PM
- * </p>
- *
- * @author Justin Miller
- * @version 1.0
- * @see SimpleDAO1
  */
 public abstract class SimpleBean
 {
@@ -41,8 +33,6 @@ public abstract class SimpleBean
 
     protected Map<String, ColumnDefinition> dbColumnMap = null;
 
-//    private HashMap<String,String> dbPrimaryKey;
-
 
     /**
      * get the database table name this bean maps to.  most likely just the bean name
@@ -53,15 +43,9 @@ public abstract class SimpleBean
     {
         if ( dbTableName == null || "".equals( dbTableName ) )
         {
-            //dbTableName = Utils.getPropertyDBName(getClass().getName().substring( getClass().getName().lastIndexOf(".") + 1));
-            //dbTableName = Utils.getPropertyDBName( getClass().getName().replaceAll("\\w+\\.","").replaceAll("Bean",""));
             dbTableName = ReflectionUtils.inferBeanDBTableName(this);
-            return  dbTableName;
         }
-        else
-        {
-            return dbTableName;
-        }
+        return  dbTableName;
     }
 
     public void setDBTableName(String dbTableName)
@@ -74,72 +58,19 @@ public abstract class SimpleBean
     {
         if ( dbPrimaryKey == null  )
         {
-            /*dbPrimaryKey = new String[1];
-            if ( dbTableName == null || "".equals( dbTableName ) )
-            {
-                dbPrimaryKey[0] = Utils.getPropertyDBName(getClass().getName().replaceAll("\\w+\\.","").replaceAll("Bean","")) + "_ID";
-            }
-            else
-            {
-                dbPrimaryKey[0] = dbTableName + "_ID";
-            } */
             dbPrimaryKey = ReflectionUtils.inferBeanDBUpdateKeys(this);
-            return dbPrimaryKey;
         }
-        else
-        {
-            return dbPrimaryKey;
-        }
+        return dbPrimaryKey;
     }
-
-/*
-
-    public HashMap<String,String> getDBPrimaryKey()
-    {
-        if ( dbPrimaryKey == null )
-        {
-            dbPrimaryKey = new HashMap<String,String>();
-
-            String keyString = getDBTableName() + "_ID";
-
-            if ( dbTableName == null || "".equals( dbTableName ) )
-            {
-                keyString = Utils.getPropertyDBName(getClass().getName().replaceAll("\\w+\\.","").replaceAll("Bean","")) + "_ID";
-            }
-            else
-            {
-                keyString = dbTableName + "_ID";
-            }
-
-            dbPrimaryKey.put( keyString, Utils.getCamelCaseColumnName( keyString ) );
-
-            return dbPrimaryKey;
-        }
-        else
-        {
-            return dbPrimaryKey;
-        }
-    }
-    public void setDBPrimaryKey( HashMap<String,String> dbPrimaryKey )
-    {
-        this.dbPrimaryKey = dbPrimaryKey;
-    }
-*/
 
     public void setDBPrimaryKey( String dbPrimaryKey )
     {
-/*
-        if ( this.dbPrimaryKey == null )
-        {
-            this.dbPrimaryKey = new HashMap<String,String>();
-        }
-        this.dbPrimaryKey.put( dbPrimaryKey, Utils.getCamelCaseColumnName( dbPrimaryKey ) );
-*/
         this.dbPrimaryKey = new String[] { dbPrimaryKey };
     }
 
     public void setDBPrimaryKey( String[] dbPrimaryKey )
     {
+
         this.dbPrimaryKey = dbPrimaryKey;
     }
 
@@ -185,28 +116,15 @@ public abstract class SimpleBean
      * Retrieve a map of the available accessors in the bean.
      * @return Map
      */
-    //public Map<String,String> describe()
     public BeanDescriptor describe()
     {
-        /*Map<String,String> props = new HashMap<String,String>();
-        PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( this );
-        for (PropertyDescriptor descriptor : descriptors)
-        {
-            String property = descriptor.getName();
-            if (!"class".equals(property) && property.indexOf("DB") < 0)
-            {
-                props.put(property, Utils.getPropertyDBName(property));
-            }
-        } */
         return new BeanDescriptor(getDBTableName(),getDBPrimaryKey(),getDBOrderBy(),getDBColumnMap());
-        //Map props = BeanUtils.describe(this);
-        //return props;
     }
 
 	public Map<String, Object> describeWithValues()
 	{
 		Map<String, Object> props = new HashMap<String, Object>();
-		PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( this );
+		PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( this );
 		for (PropertyDescriptor descriptor : descriptors)
 		{
 			String property = descriptor.getName();
@@ -234,73 +152,6 @@ public abstract class SimpleBean
     {
         if ( log.isDebugEnabled() ) { log.debug("populate - begin");}
         ReflectionUtils.populateBean(this, props);
-
-        /*
-        for (Object o : props.keySet())
-        {
-            String propName = (String) o;
-            if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "'");}
-
-            if (propName == null)
-            {
-                continue;
-            }
-            Object value = props.get(propName);
-            // turn date into displayable date
-
-
-            if (propName.matches(".*[dD]ate$") && value != null && value instanceof String )
-            {
-                if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' is a string and has date in the name, format it");}
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-                //sdf.setLenient(false);
-                try
-                {
-                    Date dt = sdf.parse(value.toString());
-                    sdf.applyPattern("MM/dd/yyyy");
-                    //java.sql.Date newDt = new java.sql.Date( dt.getTime());
-                    value = sdf.format(dt);
-                    //value = dt.toString();
-                }
-                catch (ParseException e)
-                {
-                    log.error("populate - unable to format the date. " + e.getMessage(), e );
-                    e.printStackTrace();
-                }
-            }
-
-            try
-            {
-
-                if ( value instanceof java.sql.Timestamp || value instanceof java.sql.Date || value instanceof java.sql.Time)
-                {
-                    if ( log.isDebugEnabled() ) { log.debug("populate - set the date property '" + propName + "'");}
-
-                    PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(this, propName);
-                    if (descriptor.getPropertyType().equals(java.util.Date.class) )
-                    {
-                        if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' expects date");}
-                        LocaleBeanUtils.setProperty(this, propName, value);
-                    }
-                    else if ( descriptor.getPropertyType().equals(java.lang.String.class))
-                    {
-                        if ( log.isDebugEnabled() ) { log.debug("populate - property '" + propName + "' expects string");}
-                        BeanUtils.setProperty(this, propName, value);
-                    }
-
-                }
-                else
-                {
-                    if ( log.isDebugEnabled() ) { log.debug("populate - set the property '" + propName + "'");}
-                    BeanUtils.setProperty(this, propName, value);
-                }
-            }
-            catch (Exception e)
-            {
-                log.error("populate - unable to set the property. " + e.getMessage(),e );
-                // do nothing, property not found or set
-            }
-        } */
     }
 
     /**

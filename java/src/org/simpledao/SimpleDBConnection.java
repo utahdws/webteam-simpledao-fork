@@ -1,32 +1,25 @@
 package org.simpledao;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-/**
- * <p/>
- * User: jumiller
- * Date: Mar 1, 2007
- * Time: 9:04:23 AM
- * </p>
- */
 public class SimpleDBConnection
 {
-    //*****************************************************Instance Variables
     private static Logger log = LoggerFactory.getLogger(SimpleDBConnection.class) ;
 
-    //private String JNDI_DSNAME_PREFIX = "java:comp/env/jdbc/";
-    private static String DEFAULT_PROP_FILE = "database.properties";
+    private static final String DEFAULT_PROP_FILE = "database.properties";
 
     private String databaseDriver;
     private String databaseURL;
@@ -39,7 +32,6 @@ public class SimpleDBConnection
 
     public enum Type { PROP_FILE , JNDI_NAME }
 
-    //*****************************************************Constructors
     public SimpleDBConnection()
     {
         type = Type.PROP_FILE;
@@ -66,7 +58,6 @@ public class SimpleDBConnection
         }
     }
 
-    //*****************************************************Getters/Setters
 
     public String getDatabaseDriver()
     {
@@ -149,13 +140,7 @@ public class SimpleDBConnection
         this.type = type;
     }
 
-    //*****************************************************Public Functions
 
-    /**
-     *
-     * @return Connection
-     * @throws java.sql.SQLException
-     */
     public Connection getDBConnection() throws SQLException
     {
         if ( log.isDebugEnabled() )
@@ -163,7 +148,7 @@ public class SimpleDBConnection
            log.debug("getDBConnection()");
         }
 
-        if ( jndiDSName == null || "".equals( jndiDSName ) )
+        if ( jndiDSName == null || jndiDSName.isEmpty())
         {
             if ( usingDatabasePool )
             {
@@ -182,7 +167,6 @@ public class SimpleDBConnection
 
     private Connection getJNDIDBConnection() throws SQLException
     {
-        //jndiDSName = ( jndiDSName == null || "".equals( jndiDSName ) ) ? JNDI_DSNAME_PREFIX + appName + "DB" : jndiDSName;
         if ( "".equals(jndiDSName ) || jndiDSName == null)
         {
             throw new RuntimeException("A JNDI Datasource name must be specified to use the JNDI Connection");
@@ -207,7 +191,6 @@ public class SimpleDBConnection
         }
 
         return ds.getConnection();
-
     }
 
     private void readPropFile()
@@ -237,7 +220,6 @@ public class SimpleDBConnection
         jndiDSName = props.getProperty("jndiDSName");
         String useDatabasePool = props.getProperty("usePool");
         usingDatabasePool = "true".equalsIgnoreCase(useDatabasePool) || "yes".equalsIgnoreCase(useDatabasePool);
-
     }
 
     private Connection getPooledDBConnection() throws SQLException

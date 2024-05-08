@@ -2,79 +2,23 @@ package org.simpledao;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.simpledao.annotations.Column;
-import org.simpledao.annotations.NullableProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
-import java.lang.annotation.Annotation;
 import java.sql.*;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/**
-  * A set of utilties used by the SimpleDAO framework for introspection and column naming.
-  * <p>
-  * User: jumiller
-  * Date: Mar 24, 2006
-  * Time: 9:20:11 AM
-  * </p>
-  * @author Justin Miller
-  * @version 1.0
-  */
 public class Utils
 {
 
 	private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    /**
-     * Default constructor
-     */
     public Utils() {}
-
-    /**
-     * Retrieve all the properties from the bean that have values.  Use PropertyUtils instead
-     * @param bean the SimpelBean to get the properties for
-     * @return an ArrayList of properties
-     * @throws Exception that you should catch
-     * @deprecated
-     */
-    /*
-    public ArrayList<PropertyDescriptor> getPropertiesWithValues( SimpleBean bean )
-    {
-        ArrayList<PropertyDescriptor> propList = new ArrayList<PropertyDescriptor>();
-
-        HashMap props = null;
-        try
-        {
-            props = (HashMap) PropertyUtils.describe( bean );
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("Unable to obtain the bean properties",e);
-        }
-
-        for (Object o : props.keySet())
-		{
-            try
-            {
-                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(bean, (String) o);
-                if (PropertyUtils.getProperty(bean, pd.getName()) != null && !"class".equals(pd.getName()))
-                {
-                    propList.add(pd);
-                }
-            }
-            catch (Exception e)
-            {
-                log.error(e);
-            }
-        }
-
-        return propList;
-    }*/
 
     /**
      *
@@ -85,14 +29,14 @@ public class Utils
     public static Map<String,String> getBeanPropertyMap(Object bean)
     {
         Map<String,String> props = new HashMap<String,String>();
-        PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
-            Annotation ca = descriptor.getReadMethod().getAnnotation(Column.class);
-            if ( ca != null && !"".equals(((Column)ca).value()))
+            Column ca = descriptor.getReadMethod().getAnnotation(Column.class);
+            if ( ca != null && !"".equals(ca.value()))
             {
-                props.put(property, ((Column)ca).value());
+                props.put(property, ca.value());
             }
             else
             {
@@ -103,7 +47,6 @@ public class Utils
             }
         }
 
-        //Map props = BeanUtils.describe(this);
         return props;
     }
 
@@ -209,41 +152,26 @@ public class Utils
             return true;
         }
 
-/*
-        if ( type == String.class )
-        {
-            return (nullValue == null && value == null ) || nullValue.equals(value);
-        }
-*/
-
-
         try
         {
-            if  ( ( type == Integer.class || "int".equals(type.getName()) ) &&
-                    (Integer)value == Integer.parseInt(nullValue) )
-            {
-                if ( value.getClass() != Integer.class &&
-                        !"int".equals(value.getClass().getName()))
-                return true;
-            }
-
             if  ( ( type == Long.class || "long".equals( type.getName() ) ) &&
                     (Long)value == Long.parseLong(nullValue) )
             {
                 return true;
             }
 
-            if ( (type == Double.class || "double".equals( type.getName() )) &&
-                    (Double)value == Double.parseDouble(nullValue) )
-            {
-                return true;
+            if ((type == Double.class || "double".equals(type.getName()))) {
+                assert value instanceof Double;
+                if ((Double)value == Double.parseDouble(nullValue)) {
+                    return true;
+                }
             }
 
-
-            if (( type==Float.class || "float".equals(type.getName() )) &&
-                    (Float)value == Float.parseFloat(nullValue ))
-            {
-                return true;
+            if ((type == Float.class || "float".equals(type.getName()))) {
+                assert value instanceof Float;
+                if ((Float)value == Float.parseFloat(nullValue )) {
+                    return true;
+                }
             }
 
             if ( value instanceof java.util.Date )
@@ -270,8 +198,6 @@ public class Utils
     {
         return true;
     }
-
-
 
     public static void bindStatementVariable ( PreparedStatement stmt, BoundVariable bv) throws SQLException
     {
@@ -379,12 +305,16 @@ public class Utils
                 {
                     if ("".equals(bv.getValue().toString()))
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is null date (String)");}
+						if ( log.isDebugEnabled() ) {
+                            log.debug("bindVariables - var '" + bv.getName() + "' is null date (String)");
+                        }
                         stmt.setNull(bv.getPosition(), Types.DATE);
                     }
                     else
                     {
-						if ( log.isDebugEnabled() ) { log.debug("bindVariables - var is date (String)");}
+						if ( log.isDebugEnabled() ) {
+                            log.debug("bindVariables - var is date (String)");
+                        }
 
                         String format = "M/d/yyyy";
                         if ( bv.getName().toLowerCase().indexOf("time") > 0 )
@@ -447,15 +377,6 @@ public class Utils
             {
 				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is Date");}
                 stmt.setTimestamp(bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
-
-/*
-                if (bv.getName().matches(".*_DATE$") )
-                    stmt.setDate( bv.getPosition(), new java.sql.Date( ((java.util.Date)bv.getValue()).getTime()) );
-                else if ( bv.getName().matches(".*_DATE_TIME$") )
-                    stmt.setTimestamp( bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
-                else if ( bv.getName().matches(".*_TIME$") )
-                    stmt.setTime( bv.getPosition(), new java.sql.Time(((java.util.Date)bv.getValue()).getTime()));
-*/
             }
             else
             {
@@ -565,15 +486,6 @@ public class Utils
 				if ( log.isDebugEnabled() ) { log.debug("bindVariables - var '" + bv.getName() + "' is Date");
                 }
                 statement.setTimestamp(bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
-
-/*
-                if (bv.getName().matches(".*_DATE$") )
-                    stmt.setDate( bv.getPosition(), new java.sql.Date( ((java.util.Date)bv.getValue()).getTime()) );
-                else if ( bv.getName().matches(".*_DATE_TIME$") )
-                    stmt.setTimestamp( bv.getPosition(), new java.sql.Timestamp(((java.util.Date)bv.getValue()).getTime()));
-                else if ( bv.getName().matches(".*_TIME$") )
-                    stmt.setTime( bv.getPosition(), new java.sql.Time(((java.util.Date)bv.getValue()).getTime()));
-*/
             }
             else
             {
@@ -610,7 +522,7 @@ public class Utils
         for (String property : properties.keySet())
         {
             String column = properties.get(property);
-            if (column == null || "".equals(column))
+            if (column == null || column.isEmpty())
             {
                 column = getPropertyDBName(property);
             }
@@ -628,7 +540,6 @@ public class Utils
         }
         return columns;
     }
-
 
     public static void closeConnection( Connection con)
     {

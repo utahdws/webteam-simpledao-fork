@@ -10,16 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-/**
- * <p/>
- * User: jumiller
- * Date: Aug 23, 2006
- * Time: 12:38:47 PM
- * </p>
- */
 public class LookupListDAO
 {
-    // ----------------------------------------------------- Instance Variables
     protected static Logger log = LoggerFactory.getLogger(LookupListDAO.class);
     protected static Logger sqlLog = LoggerFactory.getLogger("SQL");
 
@@ -29,9 +21,8 @@ public class LookupListDAO
 
     private LookupListDAO() {}
 
-    private static LookupListDAO lookupList = new LookupListDAO();
+    private static final LookupListDAO lookupList = new LookupListDAO();
 
-    // ----------------------------------------------------- Public Methods
 
     public static LookupListDAO getInstance()
     {

@@ -1,12 +1,5 @@
 package org.simpledao;
 
-/**
- * <p/>
- * User: jumiller
- * Date: Jul 13, 2006
- * Time: 9:22:27 AM
- * </p>
- */
 public class SimpleDAOConfig
 {
     private String beanNameSuffix = "";

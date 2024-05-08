@@ -1,6 +1,7 @@
 package org.simpledao;
 
 import org.apache.commons.beanutils.PropertyUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
