@@ -1,7 +1,7 @@
 package org.simpledao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +16,9 @@ import java.util.Map;
 
 //todo: insert byte array blob
 //todo: handle clob in insert
+@Slf4j
 public class SimpleDAO<T>
 {
-    private static final Logger log = LoggerFactory.getLogger( SimpleDAO.class );
     private static final Logger sqlLog = LoggerFactory.getLogger("SQL");
 
     public void simpleInsert( T bean ) throws SQLException
