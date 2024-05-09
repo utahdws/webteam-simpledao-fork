@@ -1,44 +1,17 @@
 package org.simpledao.lookuplist;
 
-/**
- * <p/>
- * User: jumiller
- * Date: Aug 23, 2006
- * Time: 12:38:41 PM
- * </p>
- */
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LookupListBean
 {
-	// ----------------------------------------------------- Instance Variables
-	private String description = null;
 	private int id ;
+	private String description = null;
 
-	// ----------------------------------------------------- Constructors
-	public LookupListBean(int id, String name)
-	{
-		this.id = id;
-		this.description = name;
-	}
-
-	public LookupListBean() {}
-
-	// ----------------------------------------------------- Getters/Setters
-	public int getId()
-	{
-		return id;
-	}
-
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}}
+}

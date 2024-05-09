@@ -7,12 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jumiller
- * Date: Feb 24, 2011
- * Time: 12:26:51 PM
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Column
