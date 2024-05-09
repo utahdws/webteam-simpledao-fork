@@ -95,9 +95,9 @@ public class SimpleDAO<T>
 		log.debug("call simpleSelectList and get the first bean");
 
 		ArrayList<T> beanList = simpleSelectList(con, criteria, descriptor);
-		if ( beanList.size() > 0 )
+		if (!beanList.isEmpty())
 		{
-			return beanList.get(0);
+			return beanList.getFirst();
 		}
 		else
 		{
@@ -357,7 +357,7 @@ public class SimpleDAO<T>
             }
 
 
-            Class type = pd.getPropertyType();
+            Class<?> type = pd.getPropertyType();
 
             //todo: replace this with ReflectionUtils.isPropertyNull()
             if (value == null ||
@@ -472,7 +472,7 @@ public class SimpleDAO<T>
             selectSQL.append( orderSQL );
             sql = selectSQL.toString();
         }
-        sqlLog.debug("buildSelectStatement SQL:" + sql);
+        sqlLog.debug("buildSelectStatement SQL:{}", sql);
 
         return Utils.prepareStatement(con, sql, bindVariables);
     }
@@ -506,7 +506,7 @@ public class SimpleDAO<T>
             {
                 ColumnDefinition def = descriptor.getPropertyMap().get(property);
                 String column = def.getName();
-                if (column == null || "".equals(column))
+                if (column == null || column.isEmpty())
                 {
                     column = Utils.getPropertyDBName(property);
                 }
@@ -541,7 +541,7 @@ public class SimpleDAO<T>
                 }
                 else
                 {
-                    Class type = pd.getPropertyType();
+                    Class<?> type = pd.getPropertyType();
                     StringBuilder col = new StringBuilder();
                     if (columnCount > 0)
                     {
@@ -584,7 +584,7 @@ public class SimpleDAO<T>
             sql = updateSQL.toString();
         }
 
-        sqlLog.debug("buildUpdateStatement SQL:" + sql);
+        sqlLog.debug("buildUpdateStatement SQL:{}", sql);
         return Utils.prepareStatement(con, sql, bindVariables);
     }
 
@@ -612,7 +612,7 @@ public class SimpleDAO<T>
             {
                 throw new RuntimeException("Unable to get the property '" + property + "'",e);
             }
-            Class type = pd.getPropertyType();
+            Class<?> type = pd.getPropertyType();
 
             if ( !Utils.isPropertyNull( type, value ) )
             {
@@ -627,7 +627,7 @@ public class SimpleDAO<T>
                 bindVariables.add( new BoundVariable( colCount, column, type, value ));
             }
         }
-        sqlLog.debug("buildDeleteStatement SQL:" + sql);
+        sqlLog.debug("buildDeleteStatement SQL:{}", sql);
         return Utils.prepareStatement(con, sql.toString(), bindVariables);
     }
 

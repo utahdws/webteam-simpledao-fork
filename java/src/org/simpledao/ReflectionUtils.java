@@ -1,20 +1,19 @@
 package org.simpledao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.simpledao.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Slf4j
 public class ReflectionUtils
 {
-    private static final Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
 
     public static BeanDescriptor describeBean( Object bean)
     {
