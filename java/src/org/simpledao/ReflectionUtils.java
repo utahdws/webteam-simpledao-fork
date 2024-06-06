@@ -1,12 +1,11 @@
 package org.simpledao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.simpledao.annotations.*;
+import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,39 +16,42 @@ public class ReflectionUtils
 
     public static BeanDescriptor describeBean( Object bean)
     {
+        BeanDescriptor descriptor = null;
         if ( bean instanceof SimpleBean)
-            return ((SimpleBean)bean).describe();
+            descriptor = ((SimpleBean)bean).describe();
         else
         {
-            PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
-            for (PropertyDescriptor prop : descriptors)
+            //PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
+            //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
+            /*for (PropertyDescriptor prop : descriptors)
             {
                 if ( prop.getPropertyType() == BeanDescriptor.class )
                 {
                     try
                     {
-                        return (BeanDescriptor)PropertyUtils.getProperty(bean,prop.getName());
+                        //return BeanUtils.getPropertyDescriptor(bean.getClass(), prop.getName());
+                        //return (BeanDescriptor) PropertyUtils.getProperty(bean,prop.getName());
                     }
                     catch (Exception e)
                     {
                         log.error("Unable to get property '{}'", prop.getName(), e);
                     }
                 }
-            }
-
+            }*/
+            descriptor = new BeanDescriptor();
+            descriptor.setTable( inferBeanDBTableName(bean));
+            descriptor.setUpdateKeys( inferBeanDBUpdateKeys( bean));
+            descriptor.setPropertyMap( getBeanPropertyDBColumnMap(bean));
+            descriptor.setOrderedColumns( getBeanDBOrderBy(bean));
         }
-        BeanDescriptor descriptor = new BeanDescriptor();
-        descriptor.setTable( inferBeanDBTableName(bean));
-        descriptor.setUpdateKeys( inferBeanDBUpdateKeys( bean));
-        descriptor.setPropertyMap( getBeanPropertyDBColumnMap(bean));
-        descriptor.setOrderedColumns( getBeanDBOrderBy(bean));
         return descriptor;
     }
 
     public static Map<String,ColumnDefinition> getBeanPropertyDBColumnMap(Object bean)
     {
         Map<String,ColumnDefinition> props = new HashMap<String,ColumnDefinition>();
-        PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
+        //PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -138,7 +140,8 @@ public class ReflectionUtils
     {
         List<String> keys = new ArrayList<String>();
         String guessedKey = null;
-        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
+        //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -171,7 +174,8 @@ public class ReflectionUtils
     public static Map<Integer, SortedColumn> getBeanDBOrderBy( Object bean )
     {
         Map<Integer, SortedColumn> sorts = new HashMap<Integer,SortedColumn>();
-        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
+        //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -231,33 +235,34 @@ public class ReflectionUtils
                 log.debug("populate - property '{}' - null property value not set", propName);
                 continue;
             }
-
-
-            if (propName.matches(".*[dD]ate$") && value instanceof String)
-            {
-                log.debug("populate - property '{}' is a string and has date in the name, format it", propName);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
-
-                try
-                {
-                    Date dt = sdf.parse(value.toString());
-                    sdf.applyPattern("MM/dd/yyyy");
-                    value = sdf.format(dt);
-                }
-                catch (ParseException e)
-                {
-                    log.error("populate - unable to format the date. {}", e.getMessage(), e);
-                }
-            }
-
             try
             {
+                //PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(bean, propName);
+                PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor( bean.getClass(), propName);
+                if(value instanceof String){
+                    if(descriptor.getPropertyType().equals(String.class)){
+                        descriptor.getWriteMethod().invoke(bean, value.toString());
+                    }else if(descriptor.getPropertyType().equals(Integer.class)){
+                        descriptor.getWriteMethod().invoke(bean, Integer.parseInt(value.toString()));
+                    }else if(descriptor.getPropertyType().equals(BigDecimal.class)){
+                        descriptor.getWriteMethod().invoke(bean, new BigDecimal(value.toString()));
+                    }else if(value instanceof Long){
+                        descriptor.getWriteMethod().invoke(bean, Long.parseLong(value.toString()));
+                    } else if (propName.matches(".*[dD]ate$")){
+                        log.debug("populate - property '{}' is a string and has date in the name, format it", propName);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
+                        Date dt = sdf.parse(value.toString());
+                        sdf.applyPattern("MM/dd/yyyy");
+                        descriptor.getWriteMethod().invoke(bean, sdf.format(dt));
+                    }
+                }else{
+                    descriptor.getWriteMethod().invoke(bean, value);
+                }
 
-                if ( value instanceof java.sql.Timestamp || value instanceof java.sql.Date || value instanceof java.sql.Time)
+                /*if ( value instanceof java.sql.Timestamp || value instanceof java.sql.Date || value instanceof java.sql.Time)
                 {
                     log.debug("populate - set the date property '{}'", propName);
 
-                    PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(bean, propName);
                     if (descriptor.getPropertyType().equals(java.util.Date.class) )
                     {
                         log.debug("populate - property '{}' expects date", propName);
@@ -274,7 +279,7 @@ public class ReflectionUtils
                 {
                     log.debug("populate - set the property '{}'", propName);
                     BeanUtils.setProperty(bean, propName, value);
-                }
+                }*/
             }
             catch (Exception e)
             {

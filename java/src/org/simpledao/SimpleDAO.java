@@ -1,9 +1,9 @@
 package org.simpledao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
 import java.io.BufferedInputStream;
@@ -347,8 +347,10 @@ public class SimpleDAO<T>
             Object value;
             try
             {
-                pd = PropertyUtils.getPropertyDescriptor( bean, property);
-                value = PropertyUtils.getProperty ( bean, property);
+                //pd = PropertyUtils.getPropertyDescriptor( bean, property);
+                pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
+                //value = PropertyUtils.getProperty ( bean, property);
+                value = pd.getReadMethod().invoke(bean);
             }
             catch (Exception e)
             {
@@ -420,8 +422,10 @@ public class SimpleDAO<T>
                 Object value;
                 try
                 {
-                    pd = PropertyUtils.getPropertyDescriptor( bean, property );
-                    value = PropertyUtils.getProperty ( bean, property );
+                    //pd = PropertyUtils.getPropertyDescriptor( bean, property);
+                    pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
+                    //value = PropertyUtils.getProperty ( bean, property);
+                    value = pd.getReadMethod().invoke(bean);
                 }
                 catch (Exception e)
                 {
@@ -515,8 +519,10 @@ public class SimpleDAO<T>
                 Object value;
                 try
                 {
-                    pd = PropertyUtils.getPropertyDescriptor(bean, property);
-                    value = PropertyUtils.getProperty(bean, property);
+                    //pd = PropertyUtils.getPropertyDescriptor( bean, property);
+                    pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
+                    //value = PropertyUtils.getProperty ( bean, property);
+                    value = pd.getReadMethod().invoke(bean);
                 } catch (Exception e)
                 {
                     throw new RuntimeException("Unable to get the property '" + property + "'", e);
@@ -605,8 +611,10 @@ public class SimpleDAO<T>
             Object value;
             try
             {
-                pd = PropertyUtils.getPropertyDescriptor( bean, property );
-                value = PropertyUtils.getProperty ( bean, property );
+                //pd = PropertyUtils.getPropertyDescriptor( bean, property);
+                pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
+                //value = PropertyUtils.getProperty ( bean, property);
+                value = pd.getReadMethod().invoke(bean);
             }
             catch (Exception e)
             {
@@ -674,8 +682,10 @@ public class SimpleDAO<T>
             Object value;
             try
             {
-                pd = PropertyUtils.getPropertyDescriptor(bean, param);
-                value = PropertyUtils.getProperty(bean, param);
+                //pd = PropertyUtils.getPropertyDescriptor( bean, property);
+                pd = BeanUtils.getPropertyDescriptor( bean.getClass(), param);
+                //value = PropertyUtils.getProperty ( bean, param);
+                value = pd.getReadMethod().invoke(bean);
             } catch (Exception e)
             {
                 log.error("Unable to get bean property named '{}'", param, e);
