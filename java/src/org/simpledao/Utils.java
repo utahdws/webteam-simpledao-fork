@@ -24,7 +24,7 @@ public class Utils
      * @return a map of properties
      * @deprecated Use ReflectionUtils.getBeanPropertyMap instead
      */
-    /*public static Map<String,String> getBeanPropertyMap(Object bean)
+    public static Map<String,String> getBeanPropertyMap(Object bean)
     {
         Map<String,String> props = new HashMap<String,String>();
         PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
@@ -47,7 +47,7 @@ public class Utils
         }
 
         return props;
-    }*/
+    }
 
 
 
