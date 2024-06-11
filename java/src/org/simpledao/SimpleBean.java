@@ -124,7 +124,6 @@ public abstract class SimpleBean
 	public Map<String, Object> describeWithValues()
 	{
 		Map<String, Object> props = new HashMap<String, Object>();
-		//PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( this );
         PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( this.getClass() );
 		for (PropertyDescriptor descriptor : descriptors)
 		{
@@ -133,7 +132,6 @@ public abstract class SimpleBean
 			{
                 try
                 {
-                    //props.put(property, PropertyUtils.getProperty( this, property));
                     props.put(property, descriptor.getReadMethod().invoke(this, property));
                 }
                 catch (Exception e)
@@ -161,30 +159,6 @@ public abstract class SimpleBean
      */
     public void reset()
     {
-        /*Map props = null;
-        try
-        {
-            props = BeanUtils.describe( this );
-        }
-        catch (Exception e)
-        {
-            log.error("Unable to get propes", e);
-        }
-        if (props != null)
-        {
-            for (Object o : props.keySet())
-            {
-                String propName = (String) o;
-                try
-                {
-                    BeanUtils.setProperty(this, propName, null);
-                }
-                catch (Exception e)
-                {
-                    log.error("Unable to set prop '{}'", propName, e);
-                }
-            }
-        }*/
         PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( this.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {

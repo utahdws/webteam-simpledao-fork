@@ -347,9 +347,7 @@ public class SimpleDAO<T>
             Object value;
             try
             {
-                //pd = PropertyUtils.getPropertyDescriptor( bean, property);
                 pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
-                //value = PropertyUtils.getProperty ( bean, property);
                 value = pd.getReadMethod().invoke(bean);
             }
             catch (Exception e)
@@ -422,9 +420,7 @@ public class SimpleDAO<T>
                 Object value;
                 try
                 {
-                    //pd = PropertyUtils.getPropertyDescriptor( bean, property);
                     pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
-                    //value = PropertyUtils.getProperty ( bean, property);
                     value = pd.getReadMethod().invoke(bean);
                 }
                 catch (Exception e)
@@ -519,9 +515,7 @@ public class SimpleDAO<T>
                 Object value;
                 try
                 {
-                    //pd = PropertyUtils.getPropertyDescriptor( bean, property);
                     pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
-                    //value = PropertyUtils.getProperty ( bean, property);
                     value = pd.getReadMethod().invoke(bean);
                 } catch (Exception e)
                 {
@@ -611,9 +605,7 @@ public class SimpleDAO<T>
             Object value;
             try
             {
-                //pd = PropertyUtils.getPropertyDescriptor( bean, property);
                 pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
-                //value = PropertyUtils.getProperty ( bean, property);
                 value = pd.getReadMethod().invoke(bean);
             }
             catch (Exception e)
@@ -682,9 +674,7 @@ public class SimpleDAO<T>
             Object value;
             try
             {
-                //pd = PropertyUtils.getPropertyDescriptor( bean, property);
                 pd = BeanUtils.getPropertyDescriptor( bean.getClass(), param);
-                //value = PropertyUtils.getProperty ( bean, param);
                 value = pd.getReadMethod().invoke(bean);
             } catch (Exception e)
             {

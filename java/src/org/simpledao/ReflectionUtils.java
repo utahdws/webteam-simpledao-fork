@@ -21,23 +21,6 @@ public class ReflectionUtils
             descriptor = ((SimpleBean)bean).describe();
         else
         {
-            //PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
-            //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
-            /*for (PropertyDescriptor prop : descriptors)
-            {
-                if ( prop.getPropertyType() == BeanDescriptor.class )
-                {
-                    try
-                    {
-                        //return BeanUtils.getPropertyDescriptor(bean.getClass(), prop.getName());
-                        //return (BeanDescriptor) PropertyUtils.getProperty(bean,prop.getName());
-                    }
-                    catch (Exception e)
-                    {
-                        log.error("Unable to get property '{}'", prop.getName(), e);
-                    }
-                }
-            }*/
             descriptor = new BeanDescriptor();
             descriptor.setTable( inferBeanDBTableName(bean));
             descriptor.setUpdateKeys( inferBeanDBUpdateKeys( bean));
@@ -50,7 +33,6 @@ public class ReflectionUtils
     public static Map<String,ColumnDefinition> getBeanPropertyDBColumnMap(Object bean)
     {
         Map<String,ColumnDefinition> props = new HashMap<String,ColumnDefinition>();
-        //PropertyDescriptor descriptors[] = PropertyUtils.getPropertyDescriptors( bean );
         PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
@@ -259,27 +241,7 @@ public class ReflectionUtils
                     descriptor.getWriteMethod().invoke(bean, value);
                 }
 
-                /*if ( value instanceof java.sql.Timestamp || value instanceof java.sql.Date || value instanceof java.sql.Time)
-                {
-                    log.debug("populate - set the date property '{}'", propName);
 
-                    if (descriptor.getPropertyType().equals(java.util.Date.class) )
-                    {
-                        log.debug("populate - property '{}' expects date", propName);
-                        LocaleBeanUtils.setProperty(bean, propName, value);
-                    }
-                    else if ( descriptor.getPropertyType().equals(java.lang.String.class))
-                    {
-                        log.debug("populate - property '{}' expects string", propName);
-                        BeanUtils.setProperty(bean, propName, value);
-                    }
-
-                }
-                else
-                {
-                    log.debug("populate - set the property '{}'", propName);
-                    BeanUtils.setProperty(bean, propName, value);
-                }*/
             }
             catch (Exception e)
             {
