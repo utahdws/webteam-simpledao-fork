@@ -1,18 +1,18 @@
 package org.simpledao;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.simpledao.annotations.ExcludedProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * <p>SimpleBean is an abstract class intended to be extended by
- * all beans used by the {@link SimpleDAO1 SimpleDAO} framework.  It includes public
+ * all beans used by the {@link SimpleDAO SimpleDAO} framework.  It includes public
  * methods for populating the bean from the database and determining
  * specific database properties at runtime (e.g. database table name)</p>
  * <p/>
@@ -124,7 +124,7 @@ public abstract class SimpleBean
 	public Map<String, Object> describeWithValues()
 	{
 		Map<String, Object> props = new HashMap<String, Object>();
-		PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( this );
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( this.getClass() );
 		for (PropertyDescriptor descriptor : descriptors)
 		{
 			String property = descriptor.getName();
@@ -132,7 +132,7 @@ public abstract class SimpleBean
 			{
                 try
                 {
-                    props.put(property, PropertyUtils.getProperty( this, property));
+                    props.put(property, descriptor.getReadMethod().invoke(this, property));
                 }
                 catch (Exception e)
                 {
@@ -159,28 +159,15 @@ public abstract class SimpleBean
      */
     public void reset()
     {
-        Map props = null;
-        try
+        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( this.getClass() );
+        for (PropertyDescriptor descriptor : descriptors)
         {
-            props = BeanUtils.describe( this );
-        }
-        catch (Exception e)
-        {
-            log.error("Unable to get propes", e);
-        }
-        if (props != null)
-        {
-            for (Object o : props.keySet())
-            {
-                String propName = (String) o;
-                try
-                {
-                    BeanUtils.setProperty(this, propName, null);
-                }
-                catch (Exception e)
-                {
-                    log.error("Unable to set prop '{}'", propName, e);
-                }
+            try {
+                descriptor.getWriteMethod().invoke(this, null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                log.error("Unable to set prop '{}'", descriptor.getName(), e);
             }
         }
     }

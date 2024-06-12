@@ -2,8 +2,8 @@ package org.simpledao;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.simpledao.annotations.Column;
+import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
@@ -27,7 +27,8 @@ public class Utils
     public static Map<String,String> getBeanPropertyMap(Object bean)
     {
         Map<String,String> props = new HashMap<String,String>();
-        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
+        // PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
