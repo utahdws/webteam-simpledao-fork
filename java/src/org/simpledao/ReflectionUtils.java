@@ -228,7 +228,7 @@ public class ReflectionUtils
                         descriptor.getWriteMethod().invoke(bean, Integer.parseInt(value.toString()));
                     }else if(descriptor.getPropertyType().equals(BigDecimal.class)){
                         descriptor.getWriteMethod().invoke(bean, new BigDecimal(value.toString()));
-                    }else if(value instanceof Short){
+                    }else if(descriptor.getPropertyType().equals(Short.class)){
                         descriptor.getWriteMethod().invoke(bean, Short.parseShort(value.toString()));
                     }else if(value instanceof Long){
                         descriptor.getWriteMethod().invoke(bean, Long.parseLong(value.toString()));
