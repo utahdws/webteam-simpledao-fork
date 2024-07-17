@@ -228,14 +228,12 @@ public class ReflectionUtils
                         descriptor.getWriteMethod().invoke(bean, Integer.parseInt(value.toString()));
                     }else if(descriptor.getPropertyType().equals(BigDecimal.class)){
                         descriptor.getWriteMethod().invoke(bean, new BigDecimal(value.toString()));
-                    }else if(value instanceof Short){
+                    }else if(descriptor.getPropertyType().equals(Short.class)){
                         descriptor.getWriteMethod().invoke(bean, Short.parseShort(value.toString()));
                     }else if(value instanceof Long){
                         descriptor.getWriteMethod().invoke(bean, Long.parseLong(value.toString()));
                     }else if(descriptor.getPropertyType().equals(Character.class)){
                         descriptor.getWriteMethod().invoke(bean, Character.valueOf((value.toString().charAt(0))));
-                    } else if(value instanceof Short) {
-                        descriptor.getWriteMethod().invoke(bean, Short.parseShort(value.toString()));
                     }else if (propName.matches(".*[dD]ate$")){
                         log.debug("populate - property '{}' is a string and has date in the name, format it", propName);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
