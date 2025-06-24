@@ -6,7 +6,7 @@
 
     <groupId>org.simpledao</groupId>
     <artifactId>simpledao</artifactId>
-    <version>2.9.13</version>
+    <version>2.9.14</version>
     <name>SimpleDAO</name>
 
     <properties>
@@ -48,6 +48,7 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${log4j.slf4j2.impl.version}</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -55,6 +56,11 @@
             <version>6.1.8</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>9.0.87</version> <!-- match your Tomcat version -->
+        </dependency>
 
     </dependencies>
 

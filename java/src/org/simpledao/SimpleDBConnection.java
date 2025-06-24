@@ -88,6 +88,25 @@ public class SimpleDBConnection
         }
     }
 
+    public String getDBConnectionData() throws SQLException {
+        DataSource ds;
+        try {
+
+            Context ctx = new InitialContext();
+            ds = (DataSource) ctx.lookup( jndiDSName );
+            if (ds instanceof org.apache.tomcat.jdbc.pool.DataSource) {
+                org.apache.tomcat.jdbc.pool.DataSource tds = (org.apache.tomcat.jdbc.pool.DataSource) ds;
+                String returnData = "active:" + tds.getNumActive() + ", idol:" + tds.getNumIdle();
+                return returnData;
+            }
+        } catch (NamingException ne) {
+            log.error("Getting Active Connections - The JNDI Datasource named '" + jndiDSName + "' was not found", ne);
+            throw new RuntimeException("Getting Active Connections - The JNDI Datasource name specified '" + jndiDSName + "' was not found");
+        }
+
+        return null;
+    }
+
     private Connection getJNDIDBConnection() throws SQLException
     {
         if ( "".equals(jndiDSName ) || jndiDSName == null)
