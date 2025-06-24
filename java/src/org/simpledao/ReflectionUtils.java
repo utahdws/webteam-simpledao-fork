@@ -224,6 +224,8 @@ public class ReflectionUtils
                 if(value instanceof String){
                     if(descriptor.getPropertyType().equals(String.class)){
                         descriptor.getWriteMethod().invoke(bean, value.toString());
+                    }else if(descriptor.getPropertyType().equals(Boolean.class)){
+                        descriptor.getWriteMethod().invoke(bean, Boolean.parseBoolean(value.toString()));
                     }else if(descriptor.getPropertyType().equals(Integer.class)){
                         descriptor.getWriteMethod().invoke(bean, Integer.parseInt(value.toString()));
                     }else if(descriptor.getPropertyType().equals(BigDecimal.class)){
