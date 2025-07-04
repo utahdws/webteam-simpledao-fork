@@ -127,7 +127,7 @@ public class SimpleDAO<T>
 
     public ArrayList<T> simpleSelectList( Connection con, T bean, BeanDescriptor descriptor ) throws SQLException
     {
-        ArrayList<T> beanList = new ArrayList<T>();
+        ArrayList<T> beanList = new ArrayList<>();
         Map<String,String> columnPropertyMap = Utils.getColumnPropertyMap( descriptor.getPropertyMap());
 
         try (PreparedStatement ps = buildSelectStatement(bean, descriptor, con);
