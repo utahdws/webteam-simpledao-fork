@@ -149,20 +149,18 @@ public class SimpleDAO<T>
                             if (blob != null) {
                                 log.debug("simpleSelectList - column # '{}' BLOB is not null, write it to bean", i);
 
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-                                BufferedInputStream bis = new BufferedInputStream(blob.getBinaryStream());
-
-                                byte[] buffer = new byte[1024];
-                                int curByte;
-                                try {
+                                try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+                                     BufferedInputStream bis = new BufferedInputStream(blob.getBinaryStream())) {
+                                    byte[] buffer = new byte[1024];
+                                    int curByte;
                                     while ((curByte = bis.read(buffer, 0, buffer.length)) != -1) {
                                         baos.write(buffer, 0, curByte);
                                     }
+                                    props.put(Utils.getCamelCaseColumnName(metaData.getColumnName(i)), baos.toByteArray());
                                 } catch (IOException e) {
                                     log.error("Unable to write BLOB", e);
                                     throw new RuntimeException("Unable to read the blob from the database", e);
                                 }
-                                props.put(Utils.getCamelCaseColumnName(metaData.getColumnName(i)), baos.toByteArray());
                             }
                         } else if (metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text")) {
                             log.debug("simpleSelectList - write CLOB to bean'");
