@@ -164,7 +164,7 @@ public class SimpleDBConnection
         }
         catch (ClassNotFoundException e)
         {
-            log.error("Unable to load teh database driver '{}'", databaseDriver, e);
+            log.error("Unable to load the database driver '{}'", databaseDriver, e);
             throw new RuntimeException("Unable to load the database driver specified '" + databaseDriver + "'");
         }
 

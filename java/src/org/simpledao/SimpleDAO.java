@@ -130,8 +130,8 @@ public class SimpleDAO<T>
         ArrayList<T> beanList = new ArrayList<T>();
         Map<String,String> columnPropertyMap = Utils.getColumnPropertyMap( descriptor.getPropertyMap());
 
-        PreparedStatement ps = buildSelectStatement( bean, descriptor, con );
-        ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = buildSelectStatement(bean, descriptor, con);
+             ResultSet rs = ps.executeQuery()) {
 
         ResultSetMetaData metaData = rs.getMetaData();
 
@@ -217,7 +217,7 @@ public class SimpleDAO<T>
 
             ReflectionUtils.populateBean(newBean,props);
             beanList.add( newBean );
-        }
+        }}
         ps.close();
 
         return beanList;
@@ -269,10 +269,9 @@ public class SimpleDAO<T>
     {
         ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
 
-            //todo: refactor this back
-            PreparedStatement ps = buildUpdateStatement(bean, description, con);
-            ps.executeUpdate();
-            ps.close();
+            try (PreparedStatement ps = buildUpdateStatement(bean, description, con)) {
+                ps.executeUpdate();
+            }
     }
 
     public void simpleDelete( T bean ) throws SQLException
@@ -315,10 +314,9 @@ public class SimpleDAO<T>
      */
     public void simpleDelete( Connection con, T bean, BeanDescriptor description ) throws SQLException
     {
-            //todo: refactor this back
-            PreparedStatement ps = buildDeleteStatement(bean, description, con);
+        try (PreparedStatement ps = buildDeleteStatement(bean, description, con)) {
             ps.executeUpdate();
-            ps.close();
+        }
     }
 
     //-----------------------PRIVATE METHODS---------------------------------
