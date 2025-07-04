@@ -138,7 +138,7 @@ public class SimpleDAO<T>
             int columnCount = metaData.getColumnCount();
 
             while (rs.next()) {
-                HashMap<String, Object> props = new HashMap<String, Object>();
+                HashMap<String, Object> props = new HashMap<>();
                 for (int i = 1; i <= columnCount; i++) {
                     if (columnPropertyMap.containsKey(metaData.getColumnName((i)).toUpperCase())) {
                         if (metaData.getColumnType(i) == Types.BLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("bytea")) {
@@ -186,7 +186,7 @@ public class SimpleDAO<T>
                 // create the return bean
                 T newBean;
                 try {
-                    newBean = (T) bean.getClass().newInstance();
+                    newBean = (T) bean.getClass().getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     log.error("Unable to create new bean", e);
                     throw new RuntimeException("Unable to instantiate the new Object", e);
