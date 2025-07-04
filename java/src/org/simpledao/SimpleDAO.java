@@ -165,7 +165,7 @@ public class SimpleDAO<T>
                                 props.put(Utils.getCamelCaseColumnName(metaData.getColumnName(i)), baos.toByteArray());
                             }
                         } else if (metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text")) {
-                            log.debug("simpleSelectList - write CLOB to bean'");
+                            log.debug("simpleSelectList - write CLOB to bean");
                             props.put(columnPropertyMap.get(metaData.getColumnName(i).toUpperCase()), rs.getString(i));
 
                         } else if (metaData.getColumnType(i) == Types.DATE || metaData.getColumnTypeName(i).equalsIgnoreCase("date")) {
