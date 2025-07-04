@@ -144,7 +144,7 @@ public class SimpleDAO<T>
                         if (metaData.getColumnType(i) == Types.BLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("bytea")) {
                             log.debug("simpleSelectList - column # '{}' is a BLOB", i);
 
-                            Blob blob = rs.getBlob(metaData.getColumnName(i).toUpperCase());
+                            Blob blob = rs.getBlob(i);
 
                             if (blob != null) {
                                 log.debug("simpleSelectList - column # '{}' BLOB is not null, write it to bean", i);
