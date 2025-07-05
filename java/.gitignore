@@ -164,3 +164,13 @@ pip-log.txt
 .DS_Store
 
 simpledao.iml
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/
+
