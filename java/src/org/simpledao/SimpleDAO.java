@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //todo: insert byte array blob
@@ -105,7 +106,7 @@ public class SimpleDAO<T>
 		}
 	}
 
-    public ArrayList<T> simpleSelectList( T criteria ) throws SQLException
+    public List<T> simpleSelectList(T criteria ) throws SQLException
     {
         SimpleDBConnection dbc = new SimpleDBConnection();
         Connection con = null;
@@ -120,7 +121,7 @@ public class SimpleDAO<T>
         }
     }
 
-    public ArrayList<T> simpleSelectList( Connection con, T criteria) throws SQLException
+    public List<T> simpleSelectList( Connection con, T criteria) throws SQLException
     {
         return simpleSelectList( con, criteria, getBeanDescriptor(criteria));
     }
@@ -244,8 +245,6 @@ public class SimpleDAO<T>
      */
     public void simpleUpdate( Connection con, T bean,BeanDescriptor description ) throws SQLException
     {
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
-
             try (PreparedStatement ps = buildUpdateStatement(bean, description, con)) {
                 ps.executeUpdate();
             }
@@ -301,7 +300,7 @@ public class SimpleDAO<T>
     //todo: handle BeanDescriptor SQL Statement
     private PreparedStatement buildInsertStatement(T bean, BeanDescriptor description, Connection con ) throws SQLException
     {
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>();
         StringBuilder sql = new StringBuilder("INSERT INTO " );
         StringBuilder valuesSQL = new StringBuilder(" ) VALUES ( ");
         int propCount = 0;
@@ -336,9 +335,8 @@ public class SimpleDAO<T>
 
             //todo: replace this with ReflectionUtils.isPropertyNull()
             if (value == null ||
-			  (type == Integer.class || "int".equals(type.getName())) && ((Integer) value < 0) ||
-			  ( type == Double.class || "double".equals( type.getName() ) ) && ((Double) value < 0.0d))
-            {
+                    (value instanceof Integer && (Integer) value < 0) ||
+                    (value instanceof Double && (Double) value < 0.0d)) {
                 continue;
             }
 
@@ -365,7 +363,7 @@ public class SimpleDAO<T>
     {
         String sql;
 
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>();
 
         if ( descriptor.getTable().toUpperCase().contains("SELECT ") &&
                 descriptor.getTable().toUpperCase().contains("FROM "))
@@ -455,7 +453,7 @@ public class SimpleDAO<T>
     private PreparedStatement buildUpdateStatement( T bean, BeanDescriptor descriptor, Connection con) throws SQLException
     {
         String sql;
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>() ;
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>() ;
 
         if ( descriptor.getTable().toUpperCase().contains("UPDATE "))
         {
@@ -463,10 +461,10 @@ public class SimpleDAO<T>
        }
         else
         {
-            bindVariables = new ArrayList<BoundVariable>();
+            bindVariables = new ArrayList<>();
             StringBuilder updateSQL = new StringBuilder("UPDATE ");
             StringBuilder whereSQL = new StringBuilder(" WHERE ");
-            ArrayList<BoundVariable> keyBindVariables = new ArrayList<BoundVariable>();
+            ArrayList<BoundVariable> keyBindVariables = new ArrayList<>();
 
             int columnCount = 0;
             int keyCount = 0;
@@ -565,7 +563,7 @@ public class SimpleDAO<T>
 
     private PreparedStatement buildDeleteStatement( T bean, BeanDescriptor description,Connection con ) throws SQLException
     {
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>();
         StringBuilder sql = new StringBuilder( "DELETE FROM ");
 
         sql.append( description.getTable() );

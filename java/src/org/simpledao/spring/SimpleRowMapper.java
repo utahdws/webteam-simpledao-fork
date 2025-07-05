@@ -2,7 +2,6 @@ package org.simpledao.spring;
 
 import org.simpledao.ColumnDefinition;
 import org.simpledao.ReflectionUtils;
-import org.simpledao.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +26,7 @@ public class SimpleRowMapper<T>
         System.out.println("test");
         
     }
-    public T mapRow(ResultSet resultSet, int i) throws SQLException
+    public T mapRow(ResultSet resultSet, int i)
     {
         //Class<?> type = ((Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
         try

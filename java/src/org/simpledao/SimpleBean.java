@@ -123,7 +123,7 @@ public abstract class SimpleBean
 
 	public Map<String, Object> describeWithValues()
 	{
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
         PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( this.getClass() );
 		for (PropertyDescriptor descriptor : descriptors)
 		{
@@ -148,7 +148,7 @@ public abstract class SimpleBean
      * @param  props  HashMap of properties to use when populating
      * @deprecated
      */
-    public void populate( HashMap props )
+    public void populate(Map props )
     {
         log.debug("populate - begin");
         ReflectionUtils.populateBean(this, props);
@@ -159,7 +159,7 @@ public abstract class SimpleBean
      */
     public void reset()
     {
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( this.getClass() );
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( this.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             try {

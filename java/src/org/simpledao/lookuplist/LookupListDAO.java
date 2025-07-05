@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LookupListDAO
 {
@@ -28,24 +29,38 @@ public class LookupListDAO
         return lookupList;
     }
 
-    public ArrayList<LookupListBean> getLookupList(Connection con, String tableName) throws Exception
+    public List<LookupListBean> getLookupList(Connection con, String tableName) throws Exception
+    {
+        ArrayList<LookupListBean> list = new ArrayList<>();
+        String sql = SELECT_LIST_SQL.replaceAll("#TABLE#", tableName).replaceAll("#WHERE#", "");
+        sqlLog.debug("getLookupList SQL: " + sql);
+        try (Statement stmnt = con.createStatement(); ResultSet rs = stmnt.executeQuery(sql))
+        {
+            while (rs.next())
+            {
+                log.debug("getLookupList - add List Item: {}", rs.getString("DESCRIPTION"));
+                list.add(new LookupListBean(rs.getInt("ID"), rs.getString("DESCRIPTION")));
+            }
+        }
+        catch (SQLException e)
+        {
+            log.error("getLookupList: {}", e.getMessage());
+            throw new Exception("An error occurred while getting the Lookup List '" + tableName + "'", e);
+        }
+        return list;
+    }
+
+    public List<LookupListBean> getLookupList(Connection con , String tableName, String criteria) throws Exception
     {
         ArrayList<LookupListBean> list = new ArrayList<LookupListBean>();
-        try
+        String sql = SELECT_LIST_SQL.replaceAll( "#TABLE#", tableName ).replaceAll( "#WHERE#", " WHERE " + criteria );
+        sqlLog.debug("getLookupList SQL: " + sql );
+        try (Statement stmnt = con.createStatement(); ResultSet rs = stmnt.executeQuery( sql ))
         {
-            String sql ;
-            Statement stmnt = con.createStatement();
-
-            sql = SELECT_LIST_SQL.replaceAll( "#TABLE#", tableName ).replaceAll( "#WHERE#", ""  );
-            sqlLog.debug("getLookupList SQL: " + sql );
-
-            ResultSet rs = stmnt.executeQuery( sql );
-
             while (rs.next())
             {
                 log.debug("getLookupList - add List Item: {}", rs.getString("DESCRIPTION") );
-                list.add( new LookupListBean( rs.getInt( "ID" ),
-                                          rs.getString( "DESCRIPTION" )  ) );
+                list.add( new LookupListBean( rs.getInt( "ID" ), rs.getString( "DESCRIPTION" )  ) );
             }
         }
         catch (SQLException e)
@@ -53,38 +68,6 @@ public class LookupListDAO
             log.error("getLookupList: {}", e.getMessage());
             throw new Exception("An error occurred while getting the Lookup List '" + tableName + "'",e);
         }
-
-        return list;
-    }
-
-    public ArrayList<LookupListBean> getLookupList(Connection con , String tableName, String criteria) throws Exception
-    {
-        ArrayList<LookupListBean> list = new ArrayList<LookupListBean>();
-        String sql ;
-        try
-        {
-
-            Statement stmnt = con.createStatement();
-
-            sql = SELECT_LIST_SQL.replaceAll( "#TABLE#", tableName ).replaceAll( "#WHERE#", " WHERE " + criteria );
-
-            sqlLog.debug("getLookupList SQL: " + sql );
-
-            ResultSet rs = stmnt.executeQuery( sql );
-
-            while (rs.next())
-            {
-                log.debug("getLookupList - add List Item: " + rs.getString("DESCRIPTION") );
-                list.add( new LookupListBean( rs.getInt( "ID" ),
-                                          rs.getString( "DESCRIPTION" )  ) );
-            }
-        }
-        catch (SQLException e)
-        {
-            log.error("getLookupList: " + e.getMessage());
-            throw new Exception("An error occurred while getting the Lookup List '" + tableName + "'",e);
-        }
-
         return list;
     }
 }

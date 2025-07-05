@@ -32,8 +32,8 @@ public class ReflectionUtils
 
     public static Map<String,ColumnDefinition> getBeanPropertyDBColumnMap(Object bean)
     {
-        Map<String,ColumnDefinition> props = new HashMap<String,ColumnDefinition>();
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
+        Map<String,ColumnDefinition> props = new HashMap<>();
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -120,10 +120,9 @@ public class ReflectionUtils
 
     public static String[] inferBeanDBUpdateKeys( Object bean )
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         String guessedKey = null;
-        //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -155,9 +154,8 @@ public class ReflectionUtils
 
     public static Map<Integer, SortedColumn> getBeanDBOrderBy( Object bean )
     {
-        Map<Integer, SortedColumn> sorts = new HashMap<Integer,SortedColumn>();
-        //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
+        Map<Integer, SortedColumn> sorts = new HashMap<>();
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -196,7 +194,7 @@ public class ReflectionUtils
      * @param bean the bean to reflect upon
      * @param  props  HashMap of properties to use when populating
      */
-    public static void populateBean( Object bean, HashMap props )
+    public static void populateBean( Object bean, Map props )
     {
         log.debug("populate - begin");
 
@@ -219,7 +217,6 @@ public class ReflectionUtils
             }
             try
             {
-                //PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(bean, propName);
                 PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor( bean.getClass(), propName);
                 if(value instanceof String){
                     if(descriptor.getPropertyType().equals(String.class)){

@@ -145,14 +145,15 @@ public class SimpleDBConnection
     private Connection getPooledDBConnection() throws SQLException
     {
         log.debug("get a pooled database connection");
-        BasicDataSource ds = new BasicDataSource();
-        ds.setUrl(databaseURL);
-        ds.setUsername(databaseUser);
-        ds.setPassword(databasePassword);
-        ds.setInitialSize( 10 );
-        ds.setMaxIdle( 5 );
-        ds.setDriverClassName( databaseDriver );
-        return ds.getConnection();
+        try (BasicDataSource ds = new BasicDataSource()) {
+            ds.setUrl(databaseURL);
+            ds.setUsername(databaseUser);
+            ds.setPassword(databasePassword);
+            ds.setInitialSize(10);
+            ds.setMaxIdle(5);
+            ds.setDriverClassName(databaseDriver);
+            return ds.getConnection();
+        }
     }
 
     private Connection getSingleDBConnection() throws SQLException

@@ -1,6 +1,5 @@
 package org.simpledao;
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.simpledao.annotations.Column;
 import org.springframework.beans.BeanUtils;
@@ -15,9 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@NoArgsConstructor
 public class Utils
 {
+    // Private constructor to prevent instantiation
+    private Utils() {}
+
     /**
      *
      * @param bean to use
@@ -26,9 +27,8 @@ public class Utils
      */
     public static Map<String,String> getBeanPropertyMap(Object bean)
     {
-        Map<String,String> props = new HashMap<String,String>();
+        Map<String,String> props = new HashMap<>();
         PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(bean.getClass());
-        // PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -504,7 +504,7 @@ public class Utils
      */
     public static Map getPropsFromColumns( ResultSetMetaData metaData, ResultSet rs ) throws SQLException
     {
-        HashMap<String,String> props = new HashMap<String,String>();
+        HashMap<String,String> props = new HashMap<>();
         int columnCount = metaData.getColumnCount();
         for ( int i = 1; i <= columnCount; i++ )
         {
@@ -515,7 +515,7 @@ public class Utils
 
     public static Map<String,String> getColumnMapFromProps( Map<String,String> properties )
     {
-        Map<String,String> columns = new HashMap<String,String>();
+        Map<String,String> columns = new HashMap<>();
         for (String property : properties.keySet())
         {
             String column = properties.get(property);
@@ -530,7 +530,7 @@ public class Utils
 
     public static Map<String,String> getColumnPropertyMap( Map<String,ColumnDefinition> props )
     {
-        Map<String,String> columns = new HashMap<String,String>();
+        Map<String,String> columns = new HashMap<>();
         for (String property : props.keySet())
         {
             columns.put( props.get(property).getName().toUpperCase(), property);
@@ -553,4 +553,3 @@ public class Utils
         }
     }
 }
-
