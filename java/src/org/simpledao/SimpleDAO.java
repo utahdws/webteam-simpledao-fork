@@ -141,7 +141,8 @@ public class SimpleDAO<T>
             while (rs.next()) {
                 HashMap<String, Object> props = new HashMap<>();
                 for (int i = 1; i <= columnCount; i++) {
-                    if (columnPropertyMap.containsKey(metaData.getColumnName((i)).toUpperCase())) {
+                    String colName = metaData.getColumnName(i).toUpperCase();
+                    if (columnPropertyMap.containsKey(colName)) {
                         if (metaData.getColumnType(i) == Types.BLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("bytea")) {
                             log.debug("simpleSelectList - column # '{}' is a BLOB", i);
 
