@@ -129,7 +129,7 @@ public class SimpleDBConnection
             }
             else
             {
-                log.error("Unable to load the properties file '" + propFile + "'", e);
+                log.error("Unable to load the properties file '{}'", propFile, e);
                 throw new RuntimeException("Unable to load the properties file '" + propFile + "'");
             }
         }
@@ -145,15 +145,14 @@ public class SimpleDBConnection
     private Connection getPooledDBConnection() throws SQLException
     {
         log.debug("get a pooled database connection");
-        try (BasicDataSource ds = new BasicDataSource()) {
-            ds.setUrl(databaseURL);
-            ds.setUsername(databaseUser);
-            ds.setPassword(databasePassword);
-            ds.setInitialSize(10);
-            ds.setMaxIdle(5);
-            ds.setDriverClassName(databaseDriver);
-            return ds.getConnection();
-        }
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl(databaseURL);
+        ds.setUsername(databaseUser);
+        ds.setPassword(databasePassword);
+        ds.setInitialSize( 10 );
+        ds.setMaxIdle( 5 );
+        ds.setDriverClassName( databaseDriver );
+        return ds.getConnection();
     }
 
     private Connection getSingleDBConnection() throws SQLException
