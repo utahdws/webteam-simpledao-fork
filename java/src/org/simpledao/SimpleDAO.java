@@ -173,6 +173,7 @@ public class SimpleDAO<T>
                             props.put( Utils.getCamelCaseColumnName( metaData.getColumnName(i) ), baos.toByteArray() );
                         }
                     }
+                    
                     else if  ( metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text") )
                     {
                         log.debug("simpleSelectList - write CLOB to bean'");
