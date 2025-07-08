@@ -127,96 +127,99 @@ public class SimpleDAO<T>
 
     public ArrayList<T> simpleSelectList( Connection con, T bean, BeanDescriptor descriptor ) throws SQLException
     {
-        ArrayList<T> beanList = new ArrayList<>();
+        ArrayList<T> beanList = new ArrayList<T>();
         Map<String,String> columnPropertyMap = Utils.getColumnPropertyMap( descriptor.getPropertyMap());
 
-        try (PreparedStatement ps = buildSelectStatement( bean, descriptor, con );
-             ResultSet rs = ps.executeQuery()) {
+        PreparedStatement ps = buildSelectStatement( bean, descriptor, con );
+        ResultSet rs = ps.executeQuery();
 
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
+        ResultSetMetaData metaData = rs.getMetaData();
 
-            while ( rs.next() )
+        int columnCount = metaData.getColumnCount();
+
+        while ( rs.next() )
+        {
+            HashMap<String,Object> props = new HashMap<String,Object>();
+            for ( int i = 1; i <= columnCount ; i++)
             {
-                HashMap<String,Object> props = new HashMap<>();
-                for ( int i = 1; i <= columnCount ; i++)
+                if ( columnPropertyMap.containsKey(metaData.getColumnName((i)).toUpperCase()))
                 {
-                    if ( columnPropertyMap.containsKey(metaData.getColumnName((i)).toUpperCase()))
+                    if ( metaData.getColumnType(i) == Types.BLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("bytea") )
                     {
-                        if ( metaData.getColumnType(i) == Types.BLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("bytea") )
+                        log.debug("simpleSelectList - column # '{}' is a BLOB", i);
+
+                        Blob blob = rs.getBlob( metaData.getColumnName(i).toUpperCase() );
+
+                        if ( blob != null )
                         {
-                            log.debug("simpleSelectList - column # '{}' is a BLOB", i);
+                            log.debug("simpleSelectList - column # '{}' BLOB is not null, write it to bean", i);
 
-                            Blob blob = rs.getBlob( metaData.getColumnName(i).toUpperCase() );
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+                            BufferedInputStream bis = new BufferedInputStream(blob.getBinaryStream());
 
-                            if ( blob != null )
+                            byte[] buffer = new byte[1024];
+                            int curByte;
+                            try
                             {
-                                log.debug("simpleSelectList - column # '{}' BLOB is not null, write it to bean", i);
-
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-                                BufferedInputStream bis = new BufferedInputStream(blob.getBinaryStream());
-
-                                byte[] buffer = new byte[1024];
-                                int curByte;
-                                try
+                                while ((curByte = bis.read(buffer, 0, buffer.length)) != -1)
                                 {
-                                    while ((curByte = bis.read(buffer, 0, buffer.length)) != -1)
-                                    {
-                                        baos.write(buffer, 0, curByte);
-                                    }
-                                } catch (IOException e)
-                                {
-                                    log.error("Unable to write BLOB", e);
-                                    throw new RuntimeException("Unable to read the blob from the database", e);
+                                    baos.write(buffer, 0, curByte);
                                 }
-                                props.put( Utils.getCamelCaseColumnName( metaData.getColumnName(i) ), baos.toByteArray() );
+                            } catch (IOException e)
+                            {
+                                log.error("Unable to write BLOB", e);
+                                throw new RuntimeException("Unable to read the blob from the database", e);
                             }
+                            props.put( Utils.getCamelCaseColumnName( metaData.getColumnName(i) ), baos.toByteArray() );
                         }
-                        else if  ( metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text") )
-                        {
-                            log.debug("simpleSelectList - write CLOB to bean'");
-                            props.put(columnPropertyMap.get(metaData.getColumnName(i).toUpperCase()), rs.getString(i));
+                    }
+                    
+                    else if  ( metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text") )
+                    {
+                        log.debug("simpleSelectList - write CLOB to bean'");
+                        props.put(columnPropertyMap.get(metaData.getColumnName(i).toUpperCase()), rs.getString(i));
 
-                        }
-                        else if ( metaData.getColumnType(i) == Types.DATE || metaData.getColumnTypeName(i).equalsIgnoreCase("date") )
-                        {
-                            log.debug("simpleSelectList - column # '{}' is a DATE", i);
-                            props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTimestamp(i) );
-                        }
-                        else if ( metaData.getColumnType(i) == Types.TIME || metaData.getColumnTypeName(i).equalsIgnoreCase("time") )
-                        {
-                            log.debug("simpleSelectList - column # '{}' is a TIME", i);
-                            props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTime(i) );
-                        }
-                        else if ( metaData.getColumnType(i) == Types.TIMESTAMP || metaData.getColumnTypeName(i).equalsIgnoreCase("timestamp"))
-                        {
-                            log.debug("simpleSelectList - column # '{}' is a TIMESTAMP", i);
-                            props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTimestamp(i) );
-                        }
-                        else
-                        {
-                            log.debug("simpleSelectList - column # '{}' is not special", i);
-                            props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getString(i) );
-                        }
+                    }
+                    else if ( metaData.getColumnType(i) == Types.DATE || metaData.getColumnTypeName(i).equalsIgnoreCase("date") )
+                    {
+                        log.debug("simpleSelectList - column # '{}' is a DATE", i);
+                        props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTimestamp(i) );
+                    }
+                    else if ( metaData.getColumnType(i) == Types.TIME || metaData.getColumnTypeName(i).equalsIgnoreCase("time") )
+                    {
+                        log.debug("simpleSelectList - column # '{}' is a TIME", i);
+                        props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTime(i) );
+                    }
+                    else if ( metaData.getColumnType(i) == Types.TIMESTAMP || metaData.getColumnTypeName(i).equalsIgnoreCase("timestamp"))
+                    {
+                        log.debug("simpleSelectList - column # '{}' is a TIMESTAMP", i);
+                        props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getTimestamp(i) );
+                    }
+                    else
+                    {
+                        log.debug("simpleSelectList - column # '{}' is not special", i);
+                        props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getString(i) );
                     }
                 }
 
-                // create the return bean
-                T newBean;
-                try
-                {
-                    newBean = (T)bean.getClass().newInstance();
-                }
-                catch (Exception e)
-                {
-                    log.error("Unable to create new bean", e);
-                    throw new RuntimeException("Unable to instantiate the new Object",e);
-                }
-
-                ReflectionUtils.populateBean(newBean,props);
-                beanList.add( newBean );
             }
+
+            // create the return bean
+            T newBean;
+            try
+            {
+                newBean = (T)bean.getClass().newInstance();
+            }
+            catch (Exception e)
+            {
+                log.error("Unable to create new bean", e);
+                throw new RuntimeException("Unable to instantiate the new Object",e);
+            }
+
+            ReflectionUtils.populateBean(newBean,props);
+            beanList.add( newBean );
         }
+        ps.close();
 
         return beanList;
     }
