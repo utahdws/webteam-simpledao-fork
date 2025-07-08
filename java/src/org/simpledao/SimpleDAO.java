@@ -138,7 +138,7 @@ public class SimpleDAO<T>
 
             while ( rs.next() )
             {
-                Map<String,Object> props = new HashMap<>();
+                HashMap<String,Object> props = new HashMap<>();
                 for ( int i = 1; i <= columnCount ; i++)
                 {
                     if ( columnPropertyMap.containsKey(metaData.getColumnName((i)).toUpperCase()))
@@ -213,7 +213,7 @@ public class SimpleDAO<T>
                     throw new RuntimeException("Unable to instantiate the new Object",e);
                 }
 
-                ReflectionUtils.populateBean(newBean,props);
+                ReflectionUtils.populateBean(newBean, props);
                 beanList.add( newBean );
             }
         }
