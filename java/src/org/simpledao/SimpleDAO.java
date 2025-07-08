@@ -199,7 +199,6 @@ public class SimpleDAO<T>
                             props.put( columnPropertyMap.get( metaData.getColumnName(i).toUpperCase()), rs.getString(i) );
                         }
                     }
-
                 }
 
                 // create the return bean
