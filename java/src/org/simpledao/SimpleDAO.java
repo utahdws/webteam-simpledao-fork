@@ -138,7 +138,7 @@ public class SimpleDAO<T>
 
             while ( rs.next() )
             {
-                HashMap<String,Object> props = new HashMap<>();
+                Map<String,Object> props = new HashMap<>();
                 for ( int i = 1; i <= columnCount ; i++)
                 {
                     if ( columnPropertyMap.containsKey(metaData.getColumnName((i)).toUpperCase()))
