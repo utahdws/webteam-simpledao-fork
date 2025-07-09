@@ -169,7 +169,7 @@ public class SimpleDAO<T>
                                     log.error("Unable to write BLOB", e);
                                     throw new RuntimeException("Unable to read the blob from the database", e);
                                 }
-                                props.put( Utils.getCamelCaseColumnName( metaData.getColumnName(i) ), baos.toByteArray() );
+                                props.put( metaData.getColumnName(i).toUpperCase(), baos.toByteArray() );
                             }
                         }
                         else if  ( metaData.getColumnType(i) == Types.CLOB || metaData.getColumnTypeName(i).equalsIgnoreCase("text") )
