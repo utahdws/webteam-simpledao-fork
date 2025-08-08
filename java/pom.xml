@@ -16,7 +16,7 @@
         <lombok.version>1.18.38</lombok.version>
         <log4j.slf4j2.impl.version>2.25.0</log4j.slf4j2.impl.version>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
-        <spring.beans.version>6.1.21</spring.beans.version>
+        <spring.beans.version>6.2.9</spring.beans.version>
     </properties>
 
     <distributionManagement>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>6.2.9</version>
+            <version>${spring.beans.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
