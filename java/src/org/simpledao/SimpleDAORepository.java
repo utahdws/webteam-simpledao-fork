@@ -19,7 +19,7 @@ public class SimpleDAORepository extends SimpleDAOBase
 
     public <T> void simpleInsert( T bean ) throws SQLException
     {
-        try (datasource.getConnection)
+        try (Connection con = dataSource.getConnection())
         {
             simpleInsert( con, bean, getBeanDescriptor(bean) );
         }
@@ -27,7 +27,7 @@ public class SimpleDAORepository extends SimpleDAOBase
 
     public <T> void simpleUpdate( T bean ) throws SQLException
     {
-        try (datasource.getConnection)
+        try (Connection con = dataSource.getConnection())
         {
             simpleUpdate( con, bean, getBeanDescriptor(bean) );
         }
@@ -35,7 +35,7 @@ public class SimpleDAORepository extends SimpleDAOBase
 
     public <T> T simpleSelect(T criteria) throws SQLException
     {
-        try (datasource.getConnection)
+        try (Connection con = dataSource.getConnection())
         {
             return simpleSelect(con, criteria, getBeanDescriptor(criteria));
         }
@@ -43,16 +43,9 @@ public class SimpleDAORepository extends SimpleDAOBase
 
     public <T> ArrayList<T> simpleSelectList(T criteria ) throws SQLException
     {
-        SimpleDBConnection dbc = new SimpleDBConnection();
-        Connection con = null;
-        try
+        try (Connection con = dataSource.getConnection())
         {
-            con = dbc.getDBConnection();
             return simpleSelectList( con, criteria);
-        }
-        finally
-        {
-            dbc.closeDBConnection(con);
         }
     }
 }
