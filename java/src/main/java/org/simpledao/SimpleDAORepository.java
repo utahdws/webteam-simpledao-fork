@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @Repository
 public class SimpleDAORepository extends SimpleDAOBase
 {
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public SimpleDAORepository(DataSource dataSource) {
         // Default constructor for Spring
@@ -21,7 +21,7 @@ public class SimpleDAORepository extends SimpleDAOBase
     {
         try (Connection con = dataSource.getConnection())
         {
-            simpleInsert( con, bean, getBeanDescriptor(bean) );
+            simpleInsert(con, bean, getBeanDescriptor(bean));
         }
     }
 
@@ -29,7 +29,7 @@ public class SimpleDAORepository extends SimpleDAOBase
     {
         try (Connection con = dataSource.getConnection())
         {
-            simpleUpdate( con, bean, getBeanDescriptor(bean) );
+            simpleUpdate(con, bean, getBeanDescriptor(bean));
         }
     }
 
@@ -45,7 +45,7 @@ public class SimpleDAORepository extends SimpleDAOBase
     {
         try (Connection con = dataSource.getConnection())
         {
-            return simpleSelectList( con, criteria);
+            return simpleSelectList(con, criteria);
         }
     }
 }

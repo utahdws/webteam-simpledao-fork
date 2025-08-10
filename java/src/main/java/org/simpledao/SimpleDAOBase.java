@@ -291,7 +291,6 @@ public class SimpleDAOBase {
             }
 
             Class<?> type = pd.getPropertyType();
-
             boolean isInt = type == Integer.class || type == int.class;
             boolean isDouble = type == Double.class || type == double.class;
             if (value == null || (isInt && (Integer) value < 0) || (isDouble && (Double) value < 0.0d))
@@ -359,7 +358,7 @@ public class SimpleDAOBase {
                 {
                     throw new SimpleDAOBaseRuntimeException("Unable to get the property '" + property + "'",e);
                 }
-                Class type = pd.getPropertyType();
+                Class<?> type = pd.getPropertyType();
 
                 if ( colCount > 0 )
                 {
