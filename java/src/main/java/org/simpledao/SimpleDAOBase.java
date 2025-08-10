@@ -21,10 +21,8 @@ import org.simpledao.exceptions.SimpleDAOBaseRuntimeException;
 
 @Slf4j()
 public class SimpleDAOBase {
-    // This Class should never be instantiated directly, but rather
-    // extended by a class that implements the SimpleDAO interface.
-    // Connection objects should not be instantiated in this class, but rather
-    // passed in by the extending class.
+    // This Class should never be instantiated directly, but rather use SimpleDAO or SimpleDAORepository
+    // which are the concrete implementations of this class.
 
     private static final Logger sqlLog = LoggerFactory.getLogger("SQL");
 
@@ -53,7 +51,6 @@ public class SimpleDAOBase {
      */
     public <T> void simpleInsert( Connection con, T bean, BeanDescriptor description ) throws SQLException
     {
-        //todo: refactor this back
         PreparedStatement ps = buildInsertStatement(bean, description, con);
         ps.executeUpdate();
         ps.close();
@@ -242,7 +239,7 @@ public class SimpleDAOBase {
     /**
      * Creates and executes a SQL DELETE statement against the Connection parameter.
      * The table name is determined from the SimpleBean derived class and the WHERE clause
-     * is asertained from the Map of SimpleBean properties.
+     * is ascertained from the Map of SimpleBean properties.
      *
      * @param con Connection object used to run the DELETE statement against
      * @param bean SimpleBean derived class used to determine the table name and WHERE clause
@@ -352,6 +349,7 @@ public class SimpleDAOBase {
                 try
                 {
                     pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
+                    assert pd != null;
                     value = pd.getReadMethod().invoke(bean);
                 }
                 catch (Exception e)

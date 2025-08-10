@@ -3,7 +3,6 @@ package org.simpledao;
 import lombok.extern.slf4j.Slf4j;
 import org.simpledao.annotations.*;
 import org.springframework.beans.BeanUtils;
-import org.simpledao.annotations.*;
 
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
@@ -14,9 +13,13 @@ import java.util.*;
 public class ReflectionUtils
 {
 
+    private ReflectionUtils() {
+        // Prevent instantiation
+    }
+
     public static BeanDescriptor describeBean( Object bean)
     {
-        BeanDescriptor descriptor = null;
+        BeanDescriptor descriptor;
         if ( bean instanceof SimpleBean)
             descriptor = ((SimpleBean)bean).describe();
         else
@@ -32,8 +35,8 @@ public class ReflectionUtils
 
     public static Map<String,ColumnDefinition> getBeanPropertyDBColumnMap(Object bean)
     {
-        Map<String,ColumnDefinition> props = new HashMap<String,ColumnDefinition>();
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
+        Map<String,ColumnDefinition> props = new HashMap<>();
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -87,7 +90,7 @@ public class ReflectionUtils
      *  by subclasses
      * 2. Converting the Class name to a table name via camel case rules
      *  (e.g., a class named LibraryBooks will become LIRARY_BOOKS)
-     * **Inner classes that don't have an annotation in the class heirarchy
+     * **Inner classes that don't have an annotation in the class hierarchy
      *   will be queried for their superclass and this method will recurse 
      * @param bean - the object to inspect
      * @return a database table name
@@ -120,10 +123,10 @@ public class ReflectionUtils
 
     public static String[] inferBeanDBUpdateKeys( Object bean )
     {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         String guessedKey = null;
-        //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
+
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -155,9 +158,8 @@ public class ReflectionUtils
 
     public static Map<Integer, SortedColumn> getBeanDBOrderBy( Object bean )
     {
-        Map<Integer, SortedColumn> sorts = new HashMap<Integer,SortedColumn>();
-        //PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors( bean );
-        PropertyDescriptor descriptors[] = BeanUtils.getPropertyDescriptors( bean.getClass() );
+        Map<Integer, SortedColumn> sorts = new HashMap<>();
+        PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors( bean.getClass() );
         for (PropertyDescriptor descriptor : descriptors)
         {
             String property = descriptor.getName();
@@ -196,7 +198,7 @@ public class ReflectionUtils
      * @param bean the bean to reflect upon
      * @param  props  HashMap of properties to use when populating
      */
-    public static void populateBean( Object bean, HashMap props )
+    public static void populateBean( Object bean, Map props )
     {
         log.debug("populate - begin");
 
@@ -219,7 +221,6 @@ public class ReflectionUtils
             }
             try
             {
-                //PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(bean, propName);
                 PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor( bean.getClass(), propName);
                 if(value instanceof String){
                     if(descriptor.getPropertyType().equals(String.class)){
@@ -246,8 +247,6 @@ public class ReflectionUtils
                 }else{
                     descriptor.getWriteMethod().invoke(bean, value);
                 }
-
-
             }
             catch (Exception e)
             {
