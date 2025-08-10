@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.simpledao.exceptions.SimpleDAOBaseRuntimeException;
+
 //todo: insert byte array blob
 //todo: handle clob in insert
 
@@ -127,7 +129,7 @@ public class SimpleDAOBase {
                                 } catch (IOException e)
                                 {
                                     log.error("Unable to write BLOB", e);
-                                    throw new RuntimeException("Unable to read the blob from the database", e);
+                                    throw new SimpleDAOBaseRuntimeException("Unable to read the blob from the database", e);
                                 }
                                 props.put( columnPropertyMap.get(metaData.getColumnName(i).toUpperCase()), baos.toByteArray() );
                             }
@@ -170,7 +172,7 @@ public class SimpleDAOBase {
                 catch (Exception e)
                 {
                     log.error("Unable to create new bean", e);
-                    throw new RuntimeException("Unable to instantiate the new Object",e);
+                    throw new SimpleDAOBaseRuntimeException("Unable to instantiate the new Object",e);
                 }
 
                 ReflectionUtils.populateBean(newBean, props);
@@ -211,9 +213,6 @@ public class SimpleDAOBase {
      */
     public <T> void simpleUpdate( Connection con, T bean,BeanDescriptor description ) throws SQLException
     {
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
-
-        //todo: refactor this back
         PreparedStatement ps = buildUpdateStatement(bean, description, con);
         ps.executeUpdate();
         ps.close();
@@ -221,16 +220,9 @@ public class SimpleDAOBase {
 
     public <T> void simpleDelete( T bean ) throws SQLException
     {
-        SimpleDBConnection dbc = new SimpleDBConnection();
-        Connection con = null;
-        try
+        try (Connection con = new SimpleDBConnection().getDBConnection())
         {
-            con = dbc.getDBConnection();
             simpleDelete( con, bean, getBeanDescriptor(bean) );
-        }
-        finally
-        {
-            dbc.closeDBConnection(con);
         }
     }
 
@@ -259,18 +251,16 @@ public class SimpleDAOBase {
      */
     public <T> void simpleDelete( Connection con, T bean, BeanDescriptor description ) throws SQLException
     {
-        //todo: refactor this back
         PreparedStatement ps = buildDeleteStatement(bean, description, con);
         ps.executeUpdate();
         ps.close();
     }
 
-    //-----------------------PRIVATE METHODS---------------------------------
 
     //todo: handle BeanDescriptor SQL Statement
     private <T> PreparedStatement buildInsertStatement(T bean, BeanDescriptor description, Connection con ) throws SQLException
     {
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>();
         StringBuilder sql = new StringBuilder("INSERT INTO " );
         StringBuilder valuesSQL = new StringBuilder(" ) VALUES ( ");
         int propCount = 0;
@@ -297,16 +287,14 @@ public class SimpleDAOBase {
             catch (Exception e)
             {
                 log.error("Unable to find bean property named '{}'", property, e);
-                throw new RuntimeException("Unable to get the bean property named '" + property + "'",e);
+                throw new SimpleDAOBaseRuntimeException("Unable to get the bean property named '" + property + "'",e);
             }
-
 
             Class<?> type = pd.getPropertyType();
 
-            //todo: replace this with ReflectionUtils.isPropertyNull()
-            if (value == null ||
-                    (type == Integer.class || "int".equals(type.getName())) && ((Integer) value < 0) ||
-                    ( type == Double.class || "double".equals( type.getName() ) ) && ((Double) value < 0.0d))
+            boolean isInt = type == Integer.class || type == int.class;
+            boolean isDouble = type == Double.class || type == double.class;
+            if (value == null || (isInt && (Integer) value < 0) || (isDouble && (Double) value < 0.0d))
             {
                 continue;
             }
@@ -334,7 +322,7 @@ public class SimpleDAOBase {
     {
         String sql;
 
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>();
 
         if ( descriptor.getTable().toUpperCase().contains("SELECT ") &&
                 descriptor.getTable().toUpperCase().contains("FROM "))
@@ -369,7 +357,7 @@ public class SimpleDAOBase {
                 }
                 catch (Exception e)
                 {
-                    throw new RuntimeException("Unable to get the property '" + property + "'",e);
+                    throw new SimpleDAOBaseRuntimeException("Unable to get the property '" + property + "'",e);
                 }
                 Class type = pd.getPropertyType();
 
@@ -424,7 +412,7 @@ public class SimpleDAOBase {
     private <T> PreparedStatement buildUpdateStatement( T bean, BeanDescriptor descriptor, Connection con) throws SQLException
     {
         String sql;
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>() ;
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>() ;
 
         if ( descriptor.getTable().toUpperCase().contains("UPDATE "))
         {
@@ -432,10 +420,10 @@ public class SimpleDAOBase {
         }
         else
         {
-            bindVariables = new ArrayList<BoundVariable>();
+            bindVariables = new ArrayList<>();
             StringBuilder updateSQL = new StringBuilder("UPDATE ");
             StringBuilder whereSQL = new StringBuilder(" WHERE ");
-            ArrayList<BoundVariable> keyBindVariables = new ArrayList<BoundVariable>();
+            ArrayList<BoundVariable> keyBindVariables = new ArrayList<>();
 
             int columnCount = 0;
             int keyCount = 0;
@@ -463,7 +451,7 @@ public class SimpleDAOBase {
                     value = pd.getReadMethod().invoke(bean);
                 } catch (Exception e)
                 {
-                    throw new RuntimeException("Unable to get the property '" + property + "'", e);
+                    throw new SimpleDAOBaseRuntimeException("Unable to get the property '" + property + "'", e);
                 }
 
                 if (isColumnAKey(keys, column))
@@ -534,7 +522,7 @@ public class SimpleDAOBase {
 
     private <T> PreparedStatement buildDeleteStatement( T bean, BeanDescriptor description,Connection con ) throws SQLException
     {
-        ArrayList<BoundVariable> bindVariables = new ArrayList<BoundVariable>();
+        ArrayList<BoundVariable> bindVariables = new ArrayList<>();
         StringBuilder sql = new StringBuilder( "DELETE FROM ");
 
         sql.append( description.getTable() );
@@ -550,11 +538,12 @@ public class SimpleDAOBase {
             try
             {
                 pd = BeanUtils.getPropertyDescriptor( bean.getClass(), property);
+                assert pd != null;
                 value = pd.getReadMethod().invoke(bean);
             }
             catch (Exception e)
             {
-                throw new RuntimeException("Unable to get the property '" + property + "'",e);
+                throw new SimpleDAOBaseRuntimeException("Unable to get the property '" + property + "'",e);
             }
             Class<?> type = pd.getPropertyType();
 
@@ -623,7 +612,7 @@ public class SimpleDAOBase {
             } catch (Exception e)
             {
                 log.error("Unable to get bean property named '{}'", param, e);
-                throw new RuntimeException("Unable to get the bean property named '" + param + "'", e);
+                throw new SimpleDAOBaseRuntimeException("Unable to get the bean property named '" + param + "'", e);
             }
             paramCount++;
             bindVariables.add(new BoundVariable(paramCount, descriptor.getPropertyMap().get(param).getName(), pd.getPropertyType(), value));
