@@ -148,9 +148,13 @@ class ReflectionUtilsTest {
         props.put(null, "someValue"); // Should be skipped
         props.put("nonExistentProperty", "should be ignored");
 
+        System.out.println("--------------------------------------------------------------------------------------");
         System.out.println("We will expect an error to be printed to the console below, this is expected behavior.");
+        System.out.println("--------------------------------------------------------------------------------------");
         ReflectionUtils.populateBean(bean, props);
+        System.out.println("--------------------------------------------------------------------------------------");
         System.out.println("We will expect an error to be printed to the console above, this is expected behavior.");
+        System.out.println("--------------------------------------------------------------------------------------");
 
         // The initial value should not be overwritten by null
         assertEquals("Initial", bean.getFirstName());
