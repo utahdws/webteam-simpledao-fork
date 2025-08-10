@@ -8,7 +8,7 @@ import org.simpledao.annotations.*;
 @Table("TEST_BEANS")
 public class TestBean {
 
-    private int id;
+    private Integer id;
 
     private String firstName;
 

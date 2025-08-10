@@ -2,6 +2,7 @@ package org.simpledao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.simpledao.annotations.*;
+import org.simpledao.exceptions.ReflectionUtilsRuntimeException;
 import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
@@ -112,12 +113,13 @@ public class ReflectionUtils
             catch (Exception e)
             {
                 log.error("infer table name - unable to instantiate super class. {}", e.getMessage(), e);
-                throw new RuntimeException("infer table name - unable to instantiate super class of inner class",e);
+                throw new ReflectionUtilsRuntimeException("infer table name - unable to instantiate super class of inner class",e);
             }
         }
         else
         {
-            return Utils.getPropertyDBName( bean.getClass().getName().replaceAll("\\w+\\.","").replaceAll("Bean",""));
+            return Utils.getPropertyDBName( bean.getClass().getName().replaceAll("\\w+\\.","")
+                    .replaceAll("Bean",""));
         }
     }
 
@@ -143,7 +145,8 @@ public class ReflectionUtils
             }
             else
             {
-                if  ("id".equals(property) || property.toUpperCase().equals(bean.getClass().getName().replaceAll("\\w+\\.","").replaceAll("Bean","").toUpperCase() +  "ID"))
+                if  ("id".equals(property) || property.toUpperCase().equals(bean.getClass().getName()
+                        .replaceAll("\\w+\\.","").replaceAll("Bean","").toUpperCase() +  "ID"))
                 {
                     guessedKey = Utils.getPropertyDBName(property);
                 }
@@ -185,7 +188,7 @@ public class ReflectionUtils
                 }
 
                 if ( position == 0 || sorts.containsKey(position) )
-                    throw new RuntimeException("Order Position must be > 0 and unique");
+                    throw new ReflectionUtilsRuntimeException("Order Position must be > 0 and unique");
 
                 sorts.put(position, column);
             }

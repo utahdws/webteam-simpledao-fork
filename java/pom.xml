@@ -11,7 +11,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <commons.beanutils.version>1.11.10</commons.beanutils.version>
         <dbcp2.version>2.13.0</dbcp2.version>
         <h2.database.version>2.2.224</h2.database.version>
         <junit.version>5.13.4</junit.version>
@@ -20,6 +19,7 @@
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <mockito.version>5.18.0</mockito.version>
         <spring.beans.version>6.2.9</spring.beans.version>
+        <surefire.version>3.5.0</surefire.version>
     </properties>
 
     <dependencyManagement>
@@ -68,6 +68,20 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.beans.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.beans.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -121,7 +135,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>${surefire.version}</version>
             </plugin>
         </plugins>
     </build>

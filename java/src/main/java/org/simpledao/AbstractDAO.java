@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class AbstractDAO<T>
 {
 
-    protected SimpleDAO<T> dao = new SimpleDAO<T>();
+    protected SimpleDAO<T> dao = new SimpleDAO<>();
 
     protected abstract Connection getConnection() throws SQLException;
 
