@@ -4,6 +4,8 @@ package org.simpledao;
 import lombok.Data;
 import org.simpledao.annotations.*;
 
+import java.math.BigDecimal;
+
 @Data
 @Table("TEST_BEANS")
 public class TestBean {
@@ -12,11 +14,21 @@ public class TestBean {
 
     private String firstName;
 
+    private Boolean active;
+
+    private Character middleInitial;
+
     private String lastName;
+
+    private Integer age;
 
     private String createdDate;
 
     private String someExcludedProperty;
+
+    private BigDecimal salary;
+
+    private Short version;
 
     @Column(value = "CREATED_DATE")
     public String getCreatedDate() {
