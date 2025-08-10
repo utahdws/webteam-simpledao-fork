@@ -1,4 +1,4 @@
-package org.simpledao;
+package org.simpledao.exceptions;
 
 /**
  * <p>A simple exception used by the SimpleDAO framework 
