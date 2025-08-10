@@ -31,7 +31,8 @@ class SimpleDAORepositoryTest {
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute("DROP TABLE IF EXISTS TEST_BEANS;");
-            stmt.execute("CREATE TABLE TEST_BEANS (ID INT PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), CREATED_DATE VARCHAR(255), SOME_INCLUDED_PROPERTY VARCHAR(255));");
+            stmt.execute("CREATE TABLE TEST_BEANS (ID INT PRIMARY KEY, FIRST_NAME VARCHAR(255), " +
+                    "LAST_NAME VARCHAR(255), CREATED_DATE VARCHAR(255), SOME_INCLUDED_PROPERTY VARCHAR(255));");
         }
     }
 
