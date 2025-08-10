@@ -3,7 +3,7 @@ package org.simpledao;
 import lombok.extern.slf4j.Slf4j;
 import org.simpledao.annotations.*;
 import org.springframework.beans.BeanUtils;
-import simpledao.annotations.*;
+import org.simpledao.annotations.*;
 
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;

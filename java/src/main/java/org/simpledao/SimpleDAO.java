@@ -9,7 +9,6 @@ import java.util.ArrayList;
 @Slf4j
 public class SimpleDAO<T> extends SimpleDAOBase
 {
-
     public void simpleInsert( T bean ) throws SQLException
     {
         try (Connection con = new SimpleDBConnection().getDBConnection())
@@ -36,16 +35,10 @@ public class SimpleDAO<T> extends SimpleDAOBase
 
     public ArrayList<T> simpleSelectList(T criteria ) throws SQLException
     {
-        SimpleDBConnection dbc = new SimpleDBConnection();
-        Connection con = null;
-        try
+        try (Connection con = new SimpleDBConnection().getDBConnection())
         {
-            con = dbc.getDBConnection();
+
             return simpleSelectList( con, criteria);
-        }
-        finally
-        {
-            dbc.closeDBConnection(con);
         }
     }
 }

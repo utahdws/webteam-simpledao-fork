@@ -39,7 +39,6 @@ public class SimpleDAOBase {
         simpleInsert(con, bean, getBeanDescriptor(bean));
     }
 
-
     /**
      * Creates and executes a SQL INSERT statement against the passed in Connection object.
      * The columns to be inserted along with their values are ascertained from the passed in
