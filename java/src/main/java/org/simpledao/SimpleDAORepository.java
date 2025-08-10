@@ -13,7 +13,7 @@ public class SimpleDAORepository extends SimpleDAOBase
     private final DataSource dataSource;
 
     public SimpleDAORepository(DataSource dataSource) {
-        // Default constructor for Spring
+        // Constructor for Spring dependency injection
         this.dataSource = dataSource;
     }
 
