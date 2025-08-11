@@ -562,7 +562,7 @@ public class SimpleDAOBase {
         return Utils.prepareStatement(con, sql.toString(), bindVariables);
     }
 
-    <T> BeanDescriptor getBeanDescriptor(T bean)
+    protected <T> BeanDescriptor getBeanDescriptor(T bean)
     {
         if ( bean instanceof SimpleBean)
             return ((SimpleBean)bean).describe();
