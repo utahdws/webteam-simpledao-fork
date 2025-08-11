@@ -2,7 +2,6 @@ package org.simpledao.spring;
 
 import org.simpledao.ColumnDefinition;
 import org.simpledao.ReflectionUtils;
-import org.simpledao.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
