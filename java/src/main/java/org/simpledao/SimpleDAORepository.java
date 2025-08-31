@@ -17,7 +17,7 @@ public class SimpleDAORepository extends SimpleDAOBase
         this.dataSource = dataSource;
     }
 
-    public <T>  void simpleInsert(T bean, BeanDescriptor descriptor) throws SQLException {
+    public <T> void simpleInsert(T bean, BeanDescriptor descriptor) throws SQLException {
         try (Connection con = dataSource.getConnection())
         {
             simpleInsert(con, bean, descriptor);
