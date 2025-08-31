@@ -57,8 +57,6 @@ public class SimpleDAO<T> extends SimpleDAOBase
         }
     }
 
-
-
     @Override
     public <C> C simpleSelect(Connection con, C criteria) throws SQLException
     {
