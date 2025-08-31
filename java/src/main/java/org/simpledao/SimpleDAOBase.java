@@ -31,11 +31,11 @@ public class SimpleDAOBase {
     /**
      * Insert data into the database based on columns introspected from the bean
      * @param con Connection object used to communicate with the database (JDBC)
-     * @param bean SimpleBean derived class that has the approprate getters/setters
+     * @param bean SimpleBean derived class that has the appropriate getters/setters
      * @throws SQLException catch-all
      * @see SimpleBean
      */
-    public <T> void simpleInsert( Connection con, T bean ) throws SQLException
+    protected <T> void simpleInsert( Connection con, T bean ) throws SQLException
     {
         simpleInsert(con, bean, getBeanDescriptor(bean));
     }
@@ -43,29 +43,29 @@ public class SimpleDAOBase {
     /**
      * Creates and executes a SQL INSERT statement against the passed in Connection object.
      * The columns to be inserted along with their values are ascertained from the passed in
-     * SimpleBean derived class and the associated Map of bean proeprties.
+     * SimpleBean derived class and the associated Map of bean properties.
      * @param con Connection object used to communicate with the database (JDBC)
-     * @param bean SimpleBean derived class that has the approprate getters/setters
-     * @param description A description of the bean
+     * @param bean SimpleBean derived class that has the appropriate getters/setters
+     * @param descriptor BeanDescriptor that describes the bean
      * @throws SQLException catch-all
      * @see SimpleBean
      */
-    public <T> void simpleInsert( Connection con, T bean, BeanDescriptor description ) throws SQLException
+    protected <T> void simpleInsert( Connection con, T bean, BeanDescriptor descriptor ) throws SQLException
     {
-        PreparedStatement ps = buildInsertStatement(bean, description, con);
+        PreparedStatement ps = buildInsertStatement(bean, descriptor, con);
         ps.executeUpdate();
         ps.close();
 
     }
 
-    public <T> T simpleSelect( Connection con, T criteria) throws SQLException
+    protected <T> T simpleSelect( Connection con, T criteria) throws SQLException
     {
         log.debug("Get the beans properties");
         return simpleSelect(con, criteria, getBeanDescriptor(criteria));
     }
 
 
-    public <T> T simpleSelect( Connection con, T criteria, BeanDescriptor descriptor ) throws SQLException
+    protected <T> T simpleSelect( Connection con, T criteria, BeanDescriptor descriptor ) throws SQLException
     {
         log.debug("call simpleSelectList and get the first bean");
 
@@ -80,12 +80,12 @@ public class SimpleDAOBase {
         }
     }
 
-    public <T> ArrayList<T> simpleSelectList( Connection con, T criteria) throws SQLException
+    protected <T> ArrayList<T> simpleSelectList( Connection con, T criteria) throws SQLException
     {
         return simpleSelectList( con, criteria, getBeanDescriptor(criteria));
     }
 
-    public <T> ArrayList<T> simpleSelectList( Connection con, T bean, BeanDescriptor descriptor ) throws SQLException
+    protected <T> ArrayList<T> simpleSelectList( Connection con, T bean, BeanDescriptor descriptor ) throws SQLException
     {
         ArrayList<T> beanList = new ArrayList<>();
         Map<String,String> columnPropertyMap = Utils.getColumnPropertyMap( descriptor.getPropertyMap());
@@ -181,7 +181,6 @@ public class SimpleDAOBase {
         return beanList;
     }
 
-
     /**
      * Introspects the passed SimpleBean for columns that need to be updated.  The
      * resulting Map of columns is then passed to the simpleUpdate method that
@@ -193,7 +192,7 @@ public class SimpleDAOBase {
      * @throws SQLException catch-all
      * @see SimpleBean
      */
-    public <T> void simpleUpdate( Connection con, T bean ) throws SQLException
+    protected <T> void simpleUpdate( Connection con, T bean ) throws SQLException
     {
         simpleUpdate(con, bean, getBeanDescriptor(bean));
     }
@@ -209,14 +208,14 @@ public class SimpleDAOBase {
      * @throws SQLException catch-all
      * @see SimpleBean
      */
-    public <T> void simpleUpdate( Connection con, T bean,BeanDescriptor description ) throws SQLException
+    protected <T> void simpleUpdate( Connection con, T bean,BeanDescriptor description ) throws SQLException
     {
         PreparedStatement ps = buildUpdateStatement(bean, description, con);
         ps.executeUpdate();
         ps.close();
     }
 
-    public <T> void simpleDelete( T bean ) throws SQLException
+    protected <T> void simpleDelete( T bean ) throws SQLException
     {
         try (Connection con = new SimpleDBConnection().getDBConnection())
         {
@@ -231,7 +230,7 @@ public class SimpleDAOBase {
      * @throws SQLException catch-all
      * @see SimpleBean
      */
-    public <T> void simpleDelete( Connection con, T bean ) throws SQLException
+    protected <T> void simpleDelete( Connection con, T bean ) throws SQLException
     {
         simpleDelete(con, bean, getBeanDescriptor(bean));
     }
@@ -247,7 +246,7 @@ public class SimpleDAOBase {
      * @param description Map of SimpleBean properties used to determine WHERE clause
      * @throws SQLException catch-all
      */
-    public <T> void simpleDelete( Connection con, T bean, BeanDescriptor description ) throws SQLException
+    protected <T> void simpleDelete( Connection con, T bean, BeanDescriptor description ) throws SQLException
     {
         PreparedStatement ps = buildDeleteStatement(bean, description, con);
         ps.executeUpdate();
