@@ -102,6 +102,4 @@ public class SimpleDAO<T> extends SimpleDAOBase
     {
         super.simpleDelete(con, bean);
     }
-
-
 }
