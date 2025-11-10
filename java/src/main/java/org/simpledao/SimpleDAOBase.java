@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,40 @@ public class SimpleDAOBase {
 
     private static final Logger sqlLog = LoggerFactory.getLogger("SQL");
 
+    // add simpleInsert for collections
+
+    /**
+     * Batch insert convenience that reuses a single connection and descriptor for a homogeneous collection of beans.
+     * Each bean is inserted individually using existing single-row logic.
+     * Caller is responsible for transaction management of the passed Connection.
+     *
+     * @param con Active JDBC Connection (transaction boundaries handled by caller)
+     * @param beans Collection of beans of the same type to insert
+     */
+    protected <T> void simpleInsert(Connection con, Collection<T> beans) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+        // Derive descriptor from first bean; all beans expected same type
+        BeanDescriptor descriptor = getBeanDescriptor(beans.iterator().next());
+        simpleInsert(con, beans, descriptor);
+    }
+
+    /**
+     * Batch insert with a provided BeanDescriptor for a collection of beans. Descriptor must match bean type.
+     *
+     * @param con Active JDBC Connection
+     * @param beans Collection of beans to insert
+     * @param descriptor BeanDescriptor for the bean type
+     */
+    protected <T> void simpleInsert(Connection con, Collection<T> beans, BeanDescriptor descriptor) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+        for (T bean : beans) {
+            simpleInsert(con, bean, descriptor);
+        }
+    }
 
     /**
      * Insert data into the database based on columns introspected from the bean
