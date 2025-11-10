@@ -11,6 +11,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -185,5 +187,50 @@ class SimpleDAORepositoryTest {
         criteria.setId(201);
         TestBean deleted = repository.simpleSelect(criteria, descriptor);
         assertThat(deleted, is(nullValue()));
+    }
+
+    @Test
+    void testSimpleInsertCollectionImplicitDescriptor() throws Exception {
+        TestBean bean1 = new TestBean();
+        bean1.setId(1000);
+        bean1.setFirstName("Batch");
+        bean1.setLastName("One");
+        TestBean bean2 = new TestBean();
+        bean2.setId(1001);
+        bean2.setFirstName("Batch");
+        bean2.setLastName("Two");
+        repository.simpleInsert(List.of(bean1, bean2));
+        TestBean criteria = new TestBean();
+        criteria.setFirstName("Batch");
+        List<TestBean> results = repository.simpleSelectList(criteria);
+        assertThat(results, hasSize(2));
+        assertThat(results.stream().map(TestBean::getLastName).toList(), containsInAnyOrder("One", "Two"));
+    }
+
+    @Test
+    void testSimpleInsertCollectionExplicitDescriptor() throws Exception {
+        TestBean bean1 = new TestBean();
+        bean1.setId(1010);
+        bean1.setFirstName("BatchD");
+        bean1.setLastName("One");
+        TestBean bean2 = new TestBean();
+        bean2.setId(1011);
+        bean2.setFirstName("BatchD");
+        bean2.setLastName("Two");
+        BeanDescriptor descriptor = repository.getBeanDescriptor(bean1);
+        repository.simpleInsert(List.of(bean1, bean2), descriptor);
+        TestBean criteria = new TestBean();
+        criteria.setFirstName("BatchD");
+        List<TestBean> results = repository.simpleSelectList(criteria, descriptor);
+        assertThat(results, hasSize(2));
+        assertThat(results.stream().map(TestBean::getLastName).toList(), containsInAnyOrder("One", "Two"));
+    }
+
+    @Test
+    void testSimpleInsertEmptyCollectionNoOp() throws Exception {
+        repository.simpleInsert(new ArrayList<TestBean>()); // should do nothing
+        TestBean criteria = new TestBean();
+        List<TestBean> results = repository.simpleSelectList(criteria); // empty criteria returns all rows (none)
+        assertThat(results, hasSize(0));
     }
 }
