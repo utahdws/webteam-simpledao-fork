@@ -124,4 +124,44 @@ public class SimpleDAORepository extends SimpleDAOBase
         }
     }
 
+    // Collection-based delete using implicit descriptor
+    public <T> void simpleDelete(Collection<T> beans) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+        try (Connection con = dataSource.getConnection()) {
+            boolean originalAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
+            try {
+                simpleDelete(con, beans); // delegate to base protected method
+                con.commit();
+            } catch (SQLException | RuntimeException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(originalAutoCommit);
+            }
+        }
+    }
+
+    // Collection-based delete using provided descriptor
+    public <T> void simpleDelete(Collection<T> beans, BeanDescriptor descriptor) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+        try (Connection con = dataSource.getConnection()) {
+            boolean originalAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
+            try {
+                simpleDelete(con, beans, descriptor); // delegate to base protected method
+                con.commit();
+            } catch (SQLException | RuntimeException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(originalAutoCommit);
+            }
+        }
+    }
+
 }

@@ -31,7 +31,7 @@ public class SimpleDAOBase {
     // add simpleInsert for collections
 
     /**
-     * Batch insert convenience that reuses a single connection and descriptor for a homogeneous collection of beans.
+     * Batch insert convenience that reuses a single connection for a collection of beans.
      * Each bean is inserted individually using existing single-row logic.
      * Caller is responsible for transaction management of the passed Connection.
      *
@@ -42,9 +42,11 @@ public class SimpleDAOBase {
         if (beans == null || beans.isEmpty()) {
             return;
         }
-        // Derive descriptor from first bean; all beans expected same type
-        BeanDescriptor descriptor = getBeanDescriptor(beans.iterator().next());
-        simpleInsert(con, beans, descriptor);
+
+        for (T bean : beans) {
+            BeanDescriptor descriptor = getBeanDescriptor(bean);
+            simpleInsert(con, bean, descriptor);
+        }
     }
 
     /**
@@ -248,6 +250,27 @@ public class SimpleDAOBase {
         PreparedStatement ps = buildUpdateStatement(bean, description, con);
         ps.executeUpdate();
         ps.close();
+    }
+
+    protected <T> void simpleDelete(Connection con, Collection<T> beans) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+
+        for (T bean : beans) {
+            BeanDescriptor descriptor = getBeanDescriptor(bean);
+            simpleDelete(con, bean, descriptor);
+        }
+    }
+
+    protected <T> void simpleDelete(Connection con, Collection<T> beans, BeanDescriptor descriptor) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+
+        for (T bean : beans) {
+            simpleDelete(con, bean, descriptor);
+        }
     }
 
     protected <T> void simpleDelete( T bean ) throws SQLException

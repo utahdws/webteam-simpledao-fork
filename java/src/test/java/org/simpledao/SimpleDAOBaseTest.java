@@ -201,4 +201,50 @@ class SimpleDAOBaseTest {
             assertEquals(2, rs.getInt("CNT"));
         }
     }
+
+    @Test
+    void testSimpleDeleteCollectionImplicitDescriptor() throws Exception {
+        TestBean b1 = new TestBean();
+        b1.setId(601);
+        b1.setName("Del One");
+        TestBean b2 = new TestBean();
+        b2.setId(602);
+        b2.setName("Del Two");
+
+        SimpleDAOBase base = new SimpleDAOBase();
+        // insert the beans first
+        base.simpleInsert(h2Connection, List.of(b1, b2));
+        // now delete the collection using implicit descriptor
+        base.simpleDelete(h2Connection, List.of(b1, b2));
+
+        try (Statement stmt = h2Connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS CNT FROM TEST_BEAN WHERE ID IN (601,602)")) {
+            assertTrue(rs.next());
+            assertEquals(0, rs.getInt("CNT"));
+        }
+    }
+
+    @Test
+    void testSimpleDeleteCollectionExplicitDescriptor() throws Exception {
+        TestBean b1 = new TestBean();
+        b1.setId(601);
+        b1.setName("Del One");
+        TestBean b2 = new TestBean();
+        b2.setId(602);
+        b2.setName("Del Two");
+
+        SimpleDAOBase base = new SimpleDAOBase();
+        BeanDescriptor descriptor = base.getBeanDescriptor(b1);
+        // insert the beans first
+        base.simpleInsert(h2Connection, List.of(b1, b2), descriptor);
+        // now delete the collection using implicit descriptor
+        base.simpleDelete(h2Connection, List.of(b1, b2), descriptor);
+
+        try (Statement stmt = h2Connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS CNT FROM TEST_BEAN WHERE ID IN (601,602)")) {
+            assertTrue(rs.next());
+            assertEquals(0, rs.getInt("CNT"));
+        }
+    }
+
 }
