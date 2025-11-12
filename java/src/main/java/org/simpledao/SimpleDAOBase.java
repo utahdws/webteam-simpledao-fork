@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,42 @@ public class SimpleDAOBase {
 
     private static final Logger sqlLog = LoggerFactory.getLogger("SQL");
 
+    // add simpleInsert for collections
+
+    /**
+     * Batch insert convenience that reuses a single connection for a collection of beans.
+     * Each bean is inserted individually using existing single-row logic.
+     * Caller is responsible for transaction management of the passed Connection.
+     *
+     * @param con Active JDBC Connection (transaction boundaries handled by caller)
+     * @param beans Collection of beans of the same type to insert
+     */
+    protected <T> void simpleInsert(Connection con, Collection<T> beans) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+
+        for (T bean : beans) {
+            BeanDescriptor descriptor = getBeanDescriptor(bean);
+            simpleInsert(con, bean, descriptor);
+        }
+    }
+
+    /**
+     * Batch insert with a provided BeanDescriptor for a collection of beans. Descriptor must match bean type.
+     *
+     * @param con Active JDBC Connection
+     * @param beans Collection of beans to insert
+     * @param descriptor BeanDescriptor for the bean type
+     */
+    protected <T> void simpleInsert(Connection con, Collection<T> beans, BeanDescriptor descriptor) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+        for (T bean : beans) {
+            simpleInsert(con, bean, descriptor);
+        }
+    }
 
     /**
      * Insert data into the database based on columns introspected from the bean
@@ -213,6 +250,27 @@ public class SimpleDAOBase {
         PreparedStatement ps = buildUpdateStatement(bean, description, con);
         ps.executeUpdate();
         ps.close();
+    }
+
+    protected <T> void simpleDelete(Connection con, Collection<T> beans) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+
+        for (T bean : beans) {
+            BeanDescriptor descriptor = getBeanDescriptor(bean);
+            simpleDelete(con, bean, descriptor);
+        }
+    }
+
+    protected <T> void simpleDelete(Connection con, Collection<T> beans, BeanDescriptor descriptor) throws SQLException {
+        if (beans == null || beans.isEmpty()) {
+            return;
+        }
+
+        for (T bean : beans) {
+            simpleDelete(con, bean, descriptor);
+        }
     }
 
     protected <T> void simpleDelete( T bean ) throws SQLException
