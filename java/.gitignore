@@ -164,3 +164,11 @@ pip-log.txt
 .DS_Store
 
 simpledao.iml
+
+# IntelliJ / IDEA
+.idea/
+*.iml
+*.iws
+.idea_modules/
+out/
+
