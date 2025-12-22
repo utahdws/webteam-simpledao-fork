@@ -11,15 +11,16 @@
 
     <properties>
         <java.version>21</java.version>
-        <dbcp2.version>2.13.0</dbcp2.version>
+        <dbcp2.version>2.14.0</dbcp2.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <h2.database.version>2.2.224</h2.database.version>
-        <junit.version>5.13.4</junit.version>
-        <lombok.version>1.18.38</lombok.version>
-        <log4j.slf4j2.impl.version>2.25.0</log4j.slf4j2.impl.version>
+        <h2.database.version>2.4.240</h2.database.version>
+        <junit.version>6.0.1</junit.version>
+        <lombok.version>1.18.42</lombok.version>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
         <mockito.version>5.18.0</mockito.version>
-        <spring.beans.version>6.2.9</spring.beans.version>
+        <slf4j.api.version>2.0.17</slf4j.api.version>
+        <spring.beans.version>6.2.15</spring.beans.version>
         <surefire.version>3.5.0</surefire.version>
     </properties>
 
@@ -93,10 +94,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- SLF4J API (compile) lets the application supply a binding.-->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>${log4j.slf4j2.impl.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.api.version}</version>
         </dependency>
 
         <dependency>
@@ -134,7 +136,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>${maven.source.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
